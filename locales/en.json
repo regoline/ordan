@@ -1,0 +1,235 @@
+{
+    "language_name": "Português Brasileiro",
+    "language": {
+        "language_changed": "Idioma trocado com sucesso"
+    },
+    "auth": {
+        "account_created": "Conta criada com sucesso!",
+        "login_success": "Login realizado com sucesso!",
+        "logout_success": "Você foi desconectado",
+        "fediverse_login_title": "Login com Fediverse",
+		"fediverse_instance_label": "Instância",
+		"fediverse_login_button": "Continuar com Fediverse",
+		"fediverse_identifier_label": "Seu usuário no fediverse ou instância",
+		"fediverse_identifier_help": "Entre seu usuário completo (@usuario@instancia.social) ou apenas a sua instância",
+		"fediverse_auth_failed": "Falha na autenticação com o fediverso",
+		"fediverse_session_expired": "Sessão expirada, por favor tente novamente.",
+		"or_label": "OU",
+		"local_login_button": "Logar com Senha"
+    },
+    "errors": {
+        "all_fields_required": "Todos os campos são obrigatórios",
+        "username_exists": "Nome de usuário já existe",
+        "email_exists": "E-mail já cadastrado",
+        "invalid_credentials": "Credenciais inválidas",
+        "account_creation_failed": "Erro ao criar conta",
+        "password_too_short": "Senha deve ter pelo menos 8 caracteres",
+        "invalid_email": "Por favor, insira um e-mail válido",
+        "fediverse_auth_failed": "Falha na autenticação com o fediverso",
+        "fediverse_login_error": "Falha ao fazer login com Fediverse",
+        "character_creation_failed": "Falha ao criar o personagem"
+    },
+    "forms": {
+        "signup": {
+            "title": "Criação de Conta",
+            "username": "Nome de usuário",
+            "email": "E-mail",
+            "password": "Senha",
+            "submit": "Criar Conta",
+            "has_account": "Já tem uma conta?"
+        },
+        "login": {
+            "title": "Entrar",
+            "username": "Usuário",
+            "password": "Senha",
+            "remember": "Lembrar de mim",
+            "submit": "Entrar",
+            "no_account": "Não tem uma conta?"
+        }
+    },
+    "navigation": {
+        "dashboard": "Painel",
+        "logout": "Sair",
+        "login": "Entrar",
+        "signup": "Cadastrar"
+    },
+    "game": {
+		"character_stats": {
+        "initial_attributes": "Atributos Iniciais (Nível 1):",
+        "per_level_gain": "Ganho por nível",
+        "per_level_suffix": "/nível",
+        "skills_title": "Habilidades"
+    },
+		"factions": {
+			"Veylan": {
+				"name": "Veylan",
+				"color": "purple",
+				"motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+				"belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.", 
+				"description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+				"valor": "Coragem, resistência, proteção",
+				"skill_name": "Reflexos rápidos",
+				"stats": {
+					"resource": "Stamina",
+					"attribute": "Destreza",
+					"experience": "XP",
+					"healthpoints": "HP"
+				}
+			},
+			"Urghan": {
+				"name": "Urghan",
+				"color": "brown",
+				"motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+				"belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.", 
+				"description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+				"valor": "Coragem, resistência, proteção",
+				"skill_name": "Armadura Forte",
+				"stats": {
+					"resource": "Vigor",
+					"attribute": "Força",
+					"experience": "XP",
+					"healthpoints": "HP"
+				}
+			},
+			"Aureen": {
+				"name": "Aureen",
+				"color": "blue",
+				"motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+				"belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.", 
+				"description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+				"valor": "Coragem, resistência, proteção",
+				"skill_name": "Precisão aérea",
+				"stats": {
+					"resource": "Mana",
+					"attribute": "Inteligência",
+					"experience": "XP",
+					"healthpoints": "HP"
+				}
+			},
+			"Camyra": {
+				"name": "Camyra",
+				"color": "green",
+				"motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+				"belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.", 
+				"description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+				"valor": "Coragem, resistência, proteção",
+				"skill_name": "Resiliência Curadora",
+				"stats": {
+					"resource": "Fé",
+					"attribute": "Devoção",
+					"experience": "XP",
+					"healthpoints": "HP"
+				}
+			}
+		},
+
+		"attributes": {
+			"title": "Atributos",
+			"destreza": "Destreza",
+			"forca": "Força",
+			"inteligencia": "Inteligência",
+			"devocao": "Devoção",
+			"healthpoints": "Pontos de Vida",
+			"hp_modifier": "Modificador de Vida",
+			"skill_destreza_description": "Se sua destreza for maior que a de seu oponente, você possui uma pequena chance de atacar primeiro e desviar de ataques.",
+			"skill_forca_description": "Se sua Força for maior que a de seu oponente, você possui uma pequena chance de bloquear um ataque.",
+			"skill_inteligencia_description": "Se sua Inteligência for maior que a de seu oponente, você possui uma pequena chance de causar 50% de dano.",
+			"skill_devocao_description": "Se sua Devoção for maior que a de seu oponente, você possui uma pequena chance de restaurar parte do deu HP máximo durante o combate.",
+			"skill_name_destreza": "Reflexos rápidos",
+			"skill_name_forca": "Armadura Forte",
+			"skill_name_inteligencia": "Precisão aérea",
+			"skill_name_devocao": "Resiliência Curadora"
+		},
+		"character_stats": {
+			"initial_attributes": "Atributos Iniciais",
+			"per_level_gain": "Ganho por Nível"
+		}
+		
+	},
+	"dashboard": {
+    "character_title": "Seu Personagem",
+    "character_image": "Imagem do personagem",
+    "no_character": "Nenhum personagem criado",
+    "level": "Nível",
+    "class": "Classe",
+    "not_selected": "Não selecionado",
+    "create_character": "Criar Personagem",
+    "actions_title": "Ações do Jogo",
+    "explore": "Explorar",
+    "inventory": "Inventário",
+    "quests": "Missões",
+    "create_character_first": "Crie um personagem para começar a jogar!",
+    "activity_title": "Atividade Recente",
+    "no_activity": "Nenhuma atividade recente",
+    "character_id": "ID do Personagem",
+    "view_character": "Ver Personagem",
+    "xp": "XP",
+    "gold": "Ouro",
+    "bio": "Bio"
+	},
+	"character_creation": {
+			"title": "Criar Personagem",
+			"submit_button": "Criar",
+			"name_label": "Nome do Personagem",
+			"faction_label": "Facção",
+			"choose_faction": "Escolha sua Facção",
+			"create_success": "Personagem criado com sucesso!",
+			"already_exists": "Você já tem um personagem!",
+			"required_fields": "Por favor, preencha todos os campos",
+			"invalid_faction": "Facção inválida selecionada",
+			"name_exists": "Nome de personagem já em uso, por favor escolha outro",
+			"faction_bonus": "Bônus de Facção",
+			"increased_skill": "Aumenta consideravelmente as chances de lançar",
+			"habilidades": "Habilidades"
+		},
+	
+    "authentication": {
+        "login_title": "Entrar",
+        "username": "Nome de usuário",
+        "password": "Senha",
+        "login_button": "Entrar",
+        "no_account": "Não tem uma conta?",
+        "signup_link": "Cadastre-se aqui"
+    },
+    "lore": {
+		"name": "Ordan",
+		"world_of": "O Mundo de",
+		"past1": "Em Ordan, os povos acreditam que cada ser humano nasce com uma centelha de uma das Quatro Grandes Essências — forças primordiais representadas por feras míticas que guiam o destino da humanidade. Essas essências moldaram culturas inteiras, que se tornaram os quatro grandes povos de Ordan. Cada povo honra sua Fera-Guia, com quem mantém um laço espiritual ancestral.",
+		"crenca": "Crença",
+		"valores": "Valores"
+	},
+	"search": {
+    "results_for": "Results for",
+    "no_results": "No players found matching your search.",
+    "player_placeholder": "Search players...",
+    "no_recent_players": "No recent players",
+    "view": "View",
+    "fight": "Fight",
+    "message": "Message"
+	},
+	
+	"fight": {
+    "title": "Battle",
+    "start_fight": "Start Fight",
+    "result": "Battle Result",
+    "winner": "Winner",
+    "log": "Battle Log",
+    "return": "Return to Dashboard",
+    "heal": "Heal",
+    "heal_button": "Heal (1 gold per HP)",
+    "current_gold": "Current gold",
+    "dead": "You're dead!",
+    "already_defeated": "is already defeated!",
+    "wait": "You need to wait before fighting again!"
+	},
+	"rankings": {
+    "title": "Player Rankings",
+    "ranking": "Ranking",
+    "by_xp": "By XP",
+    "by_level": "By Level",
+    "by_kills": "By PvP Kills",
+    "your_rank": "Your Rank",
+    "view_all": "View All Rankings"
+	}
+		
+}

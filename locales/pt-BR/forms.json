@@ -1,0 +1,18 @@
+{
+        "signup": {
+            "title": "Criação de Conta",
+            "username": "Nome de usuário",
+            "email": "E-mail",
+            "password": "Senha",
+            "submit": "Criar Conta",
+            "has_account": "Já tem uma conta?"
+        },
+        "login": {
+            "title": "Entrar",
+            "username": "Usuário",
+            "password": "Senha",
+            "remember": "Lembrar de mim",
+            "submit": "Entrar",
+            "no_account": "Não tem uma conta?"
+        }
+    }

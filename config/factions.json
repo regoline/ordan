@@ -1,0 +1,40 @@
+{
+    "factions": {
+        "Veylan": {
+            "stats": {
+                "destreza": {"base": 3, "per_level": 1.2},
+                "forca": {"base": 2, "per_level": 1.0},
+                "inteligencia": {"base": 1.5, "per_level": 0.8},
+                "devocao": {"base": 1, "per_level": 0.5},
+                "healthpoints": {"base": 20, "per_level": 15}
+            }
+        },
+        "Urghan": {
+            "stats": {
+                "destreza": {"base": 2, "per_level": 1.0},
+                "forca": {"base": 3, "per_level": 1.2},
+                "inteligencia": {"base": 1, "per_level": 0.5},
+                "devocao": {"base": 1.5, "per_level": 0.8},
+                "healthpoints": {"base": 22, "per_level": 16}
+            }
+        },
+        "Aureen": {
+            "stats": {
+                "destreza": {"base": 1.5, "per_level": 1.0},
+                "forca": {"base": 1, "per_level": 0.5},
+                "inteligencia": {"base": 3, "per_level": 1.2},
+                "devocao": {"base": 1.5, "per_level": 0.8},
+                "healthpoints": {"base": 18, "per_level": 13}
+            }
+        },
+        "Camyra": {
+            "stats": {
+                "destreza": {"base": 1, "per_level": 0.5},
+                "forca": {"base": 1.5, "per_level": 0.8},
+                "inteligencia": {"base": 2, "per_level": 1.0},
+                "devocao": {"base": 3, "per_level": 1.2},
+                "healthpoints": {"base": 21, "per_level": 14}
+            }
+        }
+    }
+}

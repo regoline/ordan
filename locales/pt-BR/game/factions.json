@@ -1,0 +1,62 @@
+{
+            "Veylan": {
+                "name": "Veylan",
+                "color": "#6c3e8d",
+                "motto": "Juntos, caçamos. Juntos, vencemos. Juntos, vivemos.",
+                "belief": "O Lobo representa a harmonia entre o indivíduo e o grupo, o instinto e a razão em equilíbrio.",
+                "description": "Os Veylan habitam as planícies e florestas temperadas. São velozes, inteligentes e vivem em grupos altamente organizados. São caçadores natos e mestres da tática.",
+                "valor": "Liberdade, estratégia, coletividade",
+                "skill_name": "Reflexos rápidos",
+                "stats": {
+                    "resource": "Stamina",
+                    "attribute": "Destreza",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Urghan": {
+                "name": "Urghan",
+                "color": "#87563e",
+                "motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+                "belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.",
+                "description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+                "valor": "Coragem, resistência, proteção",
+                "skill_name": "Armadura Forte",
+                "stats": {
+                    "resource": "Vigor",
+                    "attribute": "Força",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Aureen": {
+                "name": "Aureen",
+                "color": "#0a3e8d",
+                "motto": "O céu é o limite apenas para quem não vê além das nuvens.",
+                "belief": "A Águia é a guardiã da mente clara, da percepção além do óbvio, e da busca pela verdade.",
+                "description": "Os Aureen vivem nas alturas — cidades suspensas, penhascos ou torres místicas. São estudiosos, magos e visionários. Acreditam que o conhecimento é a chave para elevar o espírito.",
+                "valor": "Sabedoria, visão, estratégia",
+                "skill_name": "Precisão aérea",
+                "stats": {
+                    "resource": "Mana",
+                    "attribute": "Inteligência",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Camyra": {
+                "name": "Camyra",
+                "color": "#25743e",
+                "motto": "Quem se conhece, muda. Quem muda, transcende.",
+                "belief": "O Camaleão ensina que a verdadeira força está na mudança, na fé e na conexão com o invisível.",
+                "description": "Camyra é um povo enigmático que habita florestas úmidas e templos escondidos. São profundamente espirituais, mestres da camuflagem e da transformação, tanto física quanto emocional.",
+                "valor": "Adaptação, fé, transformação interior",
+                "skill_name": "Resiliência Curadora",
+                "stats": {
+                    "resource": "Fé",
+                    "attribute": "Devoção",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            }
+        }

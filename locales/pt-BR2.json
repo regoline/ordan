@@ -1,0 +1,644 @@
+{
+    "language_name": "Português Brasileiro",
+    "language": {
+        "language_changed": "Idioma trocado com sucesso"
+    },
+    "auth": {
+        "account_created": "Conta criada com sucesso!",
+        "login_success": "Login realizado com sucesso!",
+        "logout_success": "Você foi desconectado",
+        "fediverse_login_title": "Login com Fediverse",
+        "fediverse_instance_label": "Instância",
+        "fediverse_login_button": "Continuar com Fediverse",
+        "fediverse_identifier_label": "Seu usuário no fediverse ou instância",
+        "fediverse_identifier_help": "Entre seu usuário completo (@usuario@instancia.social) ou apenas a sua instância",
+        "fediverse_auth_failed": "Falha na autenticação com o fediverso",
+        "fediverse_session_expired": "Sessão expirada, por favor tente novamente.",
+        "or_label": "OU",
+        "local_login_button": "Logar com Senha"
+    },
+    "errors": {
+        "all_fields_required": "Todos os campos são obrigatórios",
+        "username_exists": "Nome de usuário já existe",
+        "email_exists": "E-mail já cadastrado",
+        "invalid_credentials": "Credenciais inválidas",
+        "account_creation_failed": "Erro ao criar conta",
+        "password_too_short": "Senha deve ter pelo menos 8 caracteres",
+        "invalid_email": "Por favor, insira um e-mail válido",
+        "fediverse_auth_failed": "Falha na autenticação com o fediverso",
+        "fediverse_login_error": "Falha ao fazer login com Fediverse",
+        "character_creation_failed": "Falha ao criar o personagem"
+    },
+    "forms": {
+        "signup": {
+            "title": "Criação de Conta",
+            "username": "Nome de usuário",
+            "email": "E-mail",
+            "password": "Senha",
+            "submit": "Criar Conta",
+            "has_account": "Já tem uma conta?"
+        },
+        "login": {
+            "title": "Entrar",
+            "username": "Usuário",
+            "password": "Senha",
+            "remember": "Lembrar de mim",
+            "submit": "Entrar",
+            "no_account": "Não tem uma conta?"
+        }
+    },
+    "navigation": {
+        "cidade": "Cidade",
+        "dashboard": "Painel",
+        "logout": "Sair",
+        "login": "Entrar",
+        "signup": "Cadastrar",
+        "academy": "Academia"
+    },
+    "game": {
+        "character_stats": {
+            "initial_attributes": "Atributos Iniciais",
+            "per_level_gain": "Ganho por Nível"
+        },
+        "items": {
+            "weapon": {
+                "iron_sword": {
+                    "name": "Iron Sword",
+                    "description": "A iron sword"
+                },
+                "short_bow": {
+                    "name": "Short Bow",
+                    "description": "A short bow"
+                },
+                "short_dagger": {
+                    "name": "Short Dagger",
+                    "description": "A short dagger"
+                },
+                "big_axe": {
+                    "name": "Big Axe",
+                    "description": "A big axe"
+                },
+                "long_sword": {
+                    "name": "Long Sword",
+                    "description": "A long sword"
+                },
+                "small_dagger": {
+                    "name": "Small Dagger",
+                    "description": "A small dagger"
+                },
+                "small_knife": {
+                    "name": "Small Knife",
+                    "description": "A small knife"
+                },
+                "iron_key": {
+                    "name": "Iron Key",
+                    "description": "A iron key"
+                },
+                "small_axe": {
+                    "name": "Small Axe",
+                    "description": "A small axe"
+                },
+                "great_axe": {
+                    "name": "Great Axe",
+                    "description": "A great axe"
+                },
+                "eagles_oath": {
+                    "name": "Eagles Oath",
+                    "description": "A eagles oath"
+                },
+                "poder_mental": {
+                    "name": "Poder Mental",
+                    "description": "A poder mental"
+                },
+                "controle_mental": {
+                    "name": "Controle Mental",
+                    "description": "A controle mental"
+                },
+                "controle_mental2": {
+                    "name": "Controle Mental2",
+                    "description": "A controle mental2"
+                }
+            },
+            "armor": {
+                "head": {
+                    "leather_cap": {
+                        "name": "Capuz de Couro",
+                        "description": "Um capuz simples que oferece proteção básica."
+                    },
+                    "leather_helmet": {
+                        "name": "Leather Helmet",
+                        "description": "Head armor: leather helmet"
+                    },
+                    "plate_helmet": {
+                        "name": "Plate Helmet",
+                        "description": "Head armor: plate helmet"
+                    },
+                    "iron_helmet": {
+                        "name": "Iron Helmet",
+                        "description": "Head armor: iron helmet"
+                    }
+                },
+                "body": {
+                    "leather_armor": {
+                        "name": "Armadura de Couro",
+                        "description": "Armadura leve feita de couro endurecido."
+                    },
+                    "body_armor": {
+                        "name": "Body Armor",
+                        "description": "Body armor: body armor"
+                    },
+                    "leather_body_armor": {
+                        "name": "Leather Body Armor",
+                        "description": "Body armor: leather body armor"
+                    },
+                    "leather_helmet": {
+                        "name": "Leather Helmet",
+                        "description": "Body armor: leather helmet"
+                    }
+                },
+                "gloves": {
+                    "leather_gloves": {
+                        "name": "Leather Gloves",
+                        "description": "Gloves armor: leather gloves"
+                    },
+                    "cloth_gloves": {
+                        "name": "Cloth Gloves",
+                        "description": "Gloves armor: cloth gloves"
+                    },
+                    "heavy_gloves": {
+                        "name": "Heavy Gloves",
+                        "description": "Gloves armor: heavy gloves"
+                    }
+                },
+                "pants": {
+                    "leather_pants": {
+                        "name": "Leather Pants",
+                        "description": "Pants armor: leather pants"
+                    }
+                },
+                "boots": {
+                    "leather_boots": {
+                        "name": "Botas de Couro",
+                        "description": "Botas confortáveis para longas jornadas."
+                    }
+                }
+            },
+            "magic": {
+                "health_potion": {
+                    "name": "Health Potion",
+                    "description": "A health potion"
+                },
+                "mana_potion": {
+                    "name": "Mana Potion",
+                    "description": "A mana potion"
+                },
+                "gold": {
+                    "name": "Gold",
+                    "description": "A gold"
+                },
+                "diamond": {
+                    "name": "Diamond",
+                    "description": "A diamond"
+                },
+                "item2": {
+                    "name": "Item2",
+                    "description": "A item2"
+                },
+                "resource_potion_100": {
+                    "name": "Resource Potion 100",
+                    "description": "A resource potion 100"
+                },
+                "diamonds": {
+                    "name": "Diamonds",
+                    "description": "A diamonds"
+                }
+            }
+        },
+        "npcs": {
+            "training_dummy": {
+                "name": "Training Dummy",
+                "description": "A simple training dummy for practicing combat skills",
+                "motto": "Hit me as hard as you can!"
+            },
+            "bandit": {
+                "name": "Bandit",
+                "description": "A dangerous bandit looking for easy prey",
+                "motto": "Your gold or your life!"
+            },
+            "skeleton": {
+                "name": "Skeleton",
+                "description": "A skeleton",
+                "motto": "I am skeleton"
+            },
+            "torres": {
+                "name": "Torres",
+                "description": "A torres",
+                "motto": "I am torres"
+            },
+            "controle_mental": {
+                "name": "Controle Mental",
+                "description": "A controle mental",
+                "motto": "I am controle mental"
+            }
+        },
+        "factions": {
+            "Veylan": {
+                "name": "Veylan",
+                "color": "#6c3e8d",
+                "motto": "Juntos, caçamos. Juntos, vencemos. Juntos, vivemos.",
+                "belief": "O Lobo representa a harmonia entre o indivíduo e o grupo, o instinto e a razão em equilíbrio.",
+                "description": "Os Veylan habitam as planícies e florestas temperadas. São velozes, inteligentes e vivem em grupos altamente organizados. São caçadores natos e mestres da tática.",
+                "valor": "Liberdade, estratégia, coletividade",
+                "skill_name": "Reflexos rápidos",
+                "stats": {
+                    "resource": "Stamina",
+                    "attribute": "Destreza",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Urghan": {
+                "name": "Urghan",
+                "color": "#87563e",
+                "motto": "Somos pedra, somos aço. Quando caímos, levantamos mais fortes.",
+                "belief": "O Urso é o símbolo da força interior, da perseverança e da responsabilidade de proteger os mais fracos.",
+                "description": "O povo de Urghan vive nas montanhas geladas e nas florestas densas do norte. São guerreiros robustos, conhecidos por sua força física, sua honra inabalável e a lealdade ao seu clã.",
+                "valor": "Coragem, resistência, proteção",
+                "skill_name": "Armadura Forte",
+                "stats": {
+                    "resource": "Vigor",
+                    "attribute": "Força",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Aureen": {
+                "name": "Aureen",
+                "color": "#0a3e8d",
+                "motto": "O céu é o limite apenas para quem não vê além das nuvens.",
+                "belief": "A Águia é a guardiã da mente clara, da percepção além do óbvio, e da busca pela verdade.",
+                "description": "Os Aureen vivem nas alturas — cidades suspensas, penhascos ou torres místicas. São estudiosos, magos e visionários. Acreditam que o conhecimento é a chave para elevar o espírito.",
+                "valor": "Sabedoria, visão, estratégia",
+                "skill_name": "Precisão aérea",
+                "stats": {
+                    "resource": "Mana",
+                    "attribute": "Inteligência",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            },
+            "Camyra": {
+                "name": "Camyra",
+                "color": "#25743e",
+                "motto": "Quem se conhece, muda. Quem muda, transcende.",
+                "belief": "O Camaleão ensina que a verdadeira força está na mudança, na fé e na conexão com o invisível.",
+                "description": "Camyra é um povo enigmático que habita florestas úmidas e templos escondidos. São profundamente espirituais, mestres da camuflagem e da transformação, tanto física quanto emocional.",
+                "valor": "Adaptação, fé, transformação interior",
+                "skill_name": "Resiliência Curadora",
+                "stats": {
+                    "resource": "Fé",
+                    "attribute": "Devoção",
+                    "experience": "XP",
+                    "healthpoints": "HP"
+                }
+            }
+        },
+        "attributes": {
+            "title": "Atributos",
+            "destreza": "Destreza",
+            "forca": "Força",
+            "inteligencia": "Inteligência",
+            "devocao": "Devoção",
+            "healthpoints": "Pontos de Vida",
+            "hp_modifier": "Modificador de Vida",
+            "skill_destreza_description": "Se sua destreza for maior que a de seu oponente, você possui uma pequena chance de atacar primeiro e desviar de ataques.",
+            "skill_forca_description": "Se sua Força for maior que a de seu oponente, você possui uma pequena chance de bloquear um ataque.",
+            "skill_inteligencia_description": "Se sua Inteligência for maior que a de seu oponente, você possui uma pequena chance de causar 50% de dano.",
+            "skill_devocao_description": "Se sua Devoção for maior que a de seu oponente, você possui uma pequena chance de restaurar parte do deu HP máximo durante o combate.",
+            "skill_name_destreza": "Reflexos rápidos",
+            "skill_name_forca": "Armadura Forte",
+            "skill_name_inteligencia": "Precisão aérea",
+            "skill_name_devocao": "Resiliência Curadora"
+        },
+        "academy": {
+            "title": "A Torre das Essências",
+            "description": "No alto de um antigo penhasco, esta torre vibra com energia elemental. Aqui, aqueles que buscam crescimento alinham suas almas com as Quatro Grandes Essências por meio de estudo rigoroso e ritos sagrados.",
+            "note": "Nota: Você só pode gastar múltiplos de 5 recursos. Se você clicar em 'Usar Todos' com 72 recursos, serão usados 70 recursos (múltiplo de 5 mais próximo para baixo).",
+            "resources": "Recursos",
+            "choose_attribute": "Escolha o atributo para treinar",
+            "choose_amount": "Escolha quantos recursos usar",
+            "use_5": "Usar 5",
+            "use_10": "Usar 10",
+            "use_50": "Usar 50",
+            "use_all": "Usar Todos",
+            "current_stats": "Atributos Atuais",
+            "training_results": "Resultados do Treino",
+            "total_training": "Total do Treino",
+            "training_per_resource": "Treino/Recurso",
+            "dead_message": "Você está morto e não pode estudar! Cure-se primeiro.",
+            "you_spent": "Você gastou",
+            "and_increase": "e aumentou",
+            "lost_resource": "Não sabemos o que aconteceu, mas você perdeu",
+            "dead": "Você precisa se curar antes de treinar na academia!",
+            "without": "Sem",
+            "to_train": "para treinar. Você precisa de ao menos 5.",
+            "training_completed": "Treino terminado! Usado",
+            "quality": {
+                "normal": "Normal",
+                "good": "Bom",
+                "excellent": "Excelente"
+            }
+        },
+        "market": {
+            "title": "Mercado",
+            "weapon_shop": "Loja de Armas",
+            "weapon_shop_desc": "Compre armas poderosas para suas batalhas",
+            "armor_shop": "Loja de Armaduras",
+            "armor_shop_desc": "Proteja-se com armaduras de qualidade",
+            "visit_shop": "Visitar Loja"
+        },
+        "fights": {
+            "title": "Batalhas",
+            "weapon_shop": "Loja de Armas",
+            "weapon_shop_desc": "Compre armas poderosas para suas batalhas",
+            "armor_shop": "Loja de Armaduras",
+            "armor_shop_desc": "Proteja-se com armaduras de qualidade",
+            "visit_shop": "Visitar Loja"
+        },
+        "arena": {
+            "title": "Arena de Batalha",
+            "min_level": "Nível Mínimo",
+            "max_level": "Nível Máximo",
+            "search": "Buscar",
+            "results": "Oponentes Disponíveis",
+            "name": "Nome",
+            "level": "Nível",
+            "faction": "Facção",
+            "actions": "Ações",
+            "attack": "Atacar",
+            "no_opponents": "Nenhum oponente encontrado com esses critérios.",
+            "current_level": "Seu nível: {level}",
+            "attackable_range": "Você pode atacar jogadores nível {min} ou acima",
+            "no_limit": "No limit (leave empty)",
+            "min_level_error": "Minimum level must be at least 1"
+        },
+        "online": {
+            "title": "Players Online",
+            "players_online": "players online",
+            "no_players": "No players are currently online"
+        },
+        "bank": {
+            "title": "Bank",
+            "on_hand": "On Hand",
+            "in_bank": "In Bank",
+            "deposit": "Deposit",
+            "withdraw": "Withdraw",
+            "amount": "Amount",
+            "deposit_all": "Deposit All",
+            "withdraw_all": "Withdraw All",
+            "how_it_works": "How It Works",
+            "rule1": "Gold in bank is safe from PvP losses",
+            "rule2": "You need gold on hand to buy items",
+            "rule3": "5% of on-hand gold is lost when defeated in PvP",
+            "deposit_success": "Deposited {amount} gold",
+            "withdraw_success": "Withdrew {amount} gold",
+            "invalid_amount": "Invalid amount"
+        },
+        "mine": {
+            "title": "Mina",
+            "on_hand": "On Hand",
+            "in_bank": "In Bank",
+            "deposit": "Deposit",
+            "withdraw": "Withdraw",
+            "amount": "Amount",
+            "deposit_all": "Deposit All",
+            "withdraw_all": "Withdraw All",
+            "how_it_works": "How It Works",
+            "rule1": "Gold in bank is safe from PvP losses",
+            "rule2": "You need gold on hand to buy items",
+            "rule3": "5% of on-hand gold is lost when defeated in PvP",
+            "deposit_success": "Deposited {amount} gold",
+            "withdraw_success": "Withdrew {amount} gold",
+            "invalid_amount": "Invalid amount"
+        },
+        "lottery": {
+            "title": "Loteria do Escocês",
+            "on_hand": "On Hand",
+            "in_bank": "In Bank",
+            "deposit": "Deposit",
+            "withdraw": "Withdraw",
+            "amount": "Amount",
+            "deposit_all": "Deposit All",
+            "withdraw_all": "Withdraw All",
+            "how_it_works": "How It Works",
+            "rule1": "Gold in bank is safe from PvP losses",
+            "rule2": "You need gold on hand to buy items",
+            "rule3": "5% of on-hand gold is lost when defeated in PvP",
+            "deposit_success": "Deposited {amount} gold",
+            "withdraw_success": "Withdrew {amount} gold",
+            "invalid_amount": "Invalid amount"
+        }
+    },
+    "dashboard": {
+        "character_title": "Seu Personagem",
+        "character_image": "Imagem do personagem",
+        "no_character": "Nenhum personagem criado",
+        "level": "Nível",
+        "class": "Classe",
+        "not_selected": "Não selecionado",
+        "create_character": "Criar Personagem",
+        "actions_title": "Ações do Jogo",
+        "explore": "Explorar",
+        "inventory": "Inventário",
+        "quests": "Missões",
+        "create_character_first": "Crie um personagem para começar a jogar!",
+        "activity_title": "Atividade Recente",
+        "no_activity": "Nenhuma atividade recente",
+        "character_id": "ID do Personagem",
+        "view_character": "Ver Personagem",
+        "xp": "XP",
+        "gold": "Ouro",
+        "diamonds": "Diamantes",
+        "reputation": "Reputação",
+        "bio": "Bio"
+    },
+    "character_creation": {
+        "title": "Criar Personagem",
+        "submit_button": "Criar",
+        "name_label": "Nome do Personagem",
+        "faction_label": "Facção",
+        "choose_faction": "Escolha sua Facção",
+        "create_success": "Personagem criado com sucesso!",
+        "already_exists": "Você já tem um personagem!",
+        "required_fields": "Por favor, preencha todos os campos",
+        "invalid_faction": "Facção inválida selecionada",
+        "name_exists": "Nome de personagem já em uso, por favor escolha outro",
+        "faction_bonus": "Bônus de Facção",
+        "increased_skill": "Aumenta consideravelmente as chances de lançar",
+        "habilidades": "Habilidades",
+        "rules_title": "Game Rules and Terms",
+        "rules_subtitle": "Before creating your character, please read and accept our rules:",
+        "rule1": "Respect other players - no harassment or hate speech",
+        "rule2": "No cheating or exploiting game mechanics",
+        "rule3": "One account per player",
+        "rule4": "The admins reserve the right to remove accounts violating these rules",
+        "rules_agreement": "By clicking 'Accept' you agree to abide by these rules.",
+        "accept_button": "Accept and Continue",
+        "delete_account_button": "Delete My Account",
+        "delete_confirm": "Are you sure you want to delete your account? This cannot be undone!",
+        "duplicate_ip_notice": "Warning: This IP address is already associated with another account. Your account will be reviewed by admins and may be deleted if it violates our one-account-per-player policy."
+    },
+    "authentication": {
+        "login_title": "Entrar",
+        "username": "Nome de usuário",
+        "password": "Senha",
+        "login_button": "Entrar",
+        "no_account": "Não tem uma conta?",
+        "signup_link": "Cadastre-se aqui"
+    },
+    "lore": {
+        "name": "Ordan",
+        "world_of": "O Mundo de",
+        "past1": "Em Ordan, os povos acreditam que cada ser humano nasce com uma centelha de uma das Quatro Grandes Essências — forças primordiais representadas por feras míticas que guiam o destino da humanidade. Essas essências moldaram culturas inteiras, que se tornaram os quatro grandes povos de Ordan. Cada povo honra sua Fera-Guia, com quem mantém um laço espiritual ancestral.",
+        "crenca": "Crença",
+        "valores": "Valores"
+    },
+    "search": {
+        "results_for": "Results for",
+        "no_results": "No players found matching your search.",
+        "player_placeholder": "Search players...",
+        "no_recent_players": "No recent players",
+        "view": "View",
+        "fight": "Fight",
+        "message": "Message"
+    },
+    "fight": {
+        "title": "Battle",
+        "start_fight": "Start Fight",
+        "result": "Battle Result",
+        "winner": "Winner",
+        "log": "Battle Log",
+        "return": "Return to Dashboard",
+        "heal": "Heal",
+        "heal_button": "Heal (1 gold per HP)",
+        "current_gold": "Current gold",
+        "dead": "You're dead!",
+        "already_defeated": "is already defeated!",
+        "wait": "You need to wait before fighting again!"
+    },
+    "rankings": {
+        "title": "Player Rankings",
+        "by_xp": "By XP",
+        "by_level": "By Level",
+        "by_kills": "By Kills",
+        "by_deaths": "By Deaths",
+        "top_forca": "Top Strength",
+        "top_destreza": "Top Dexterity",
+        "top_inteligencia": "Top Intelligence",
+        "top_devocao": "Top Devotion",
+        "top_combined": "Top Combined",
+        "top_reputation": "Best Reputation",
+        "worst_reputation": "Worst Reputation"
+    },
+    "shop": {
+        "title": "Inventário",
+        "weapons": "Armas",
+        "armor": "Armaduras",
+        "buy": "Comprar",
+        "equip": "Equipar",
+        "unequip": "Desequipar",
+        "sell": "Vender",
+        "price": "Preço",
+        "level_required": "Nível Requerido",
+        "no_items": "Nenhum item disponível",
+        "not_enough_gold": "Ouro insuficiente!",
+        "level_too_low": "Nível muito baixo para comprar este item!",
+        "purchase_success": "Compra realizada com sucesso!",
+        "equip_success": "Item equipado com sucesso!",
+        "unequip_success": "Item desequipado com sucesso!",
+        "sell_success": "Item vendido com sucesso!",
+        "item_type": "Tipo de Item",
+        "weapon": "Arma",
+        "damage": "Dano",
+        "defense": "Defesa",
+        "health_bonus": "Bônus de Vida",
+        "armor_head": "Capacetes",
+        "armor_body": "Armaduras",
+        "armor_gloves": "Luvas",
+        "armor_pants": "Calças",
+        "armor_boots": "Botas",
+        "requires": "Requires",
+        "magic_shop": "Loja Mágica",
+        "magic_items": "Itens Mágicos",
+        "no_magic_items": "Nenhum item mágico no inventário",
+        "use": "Usar"
+    },
+    "admin": {
+        "title": "Painel Admin",
+        "items": "Itens",
+        "users": "Usuários",
+        "add_item": "Adicionar Item",
+        "edit_item": "Editar Item",
+        "delete_item": "Remover Item",
+        "item_added": "Item adicionado com sucesso!",
+        "item_updated": "Item atualizado com sucesso!",
+        "item_deleted": "Item removido com sucesso!",
+        "manage_users": "Gerenciar Usuários",
+        "promote_admin": "Tornar Admin",
+        "revoke_admin": "Remover Admin",
+        "edit_user": "Editar Usuário",
+        "delete_user": "Deletar Usuário",
+        "user_updated": "Usuário atualizado com sucesso!",
+        "user_deleted": "Usuário removido com sucesso!",
+        "admin_promoted": "Privilégios de admin concedidos!",
+        "admin_revoked": "Privilégios de admin removidos!",
+        "translation_key": "Chave de Tradução",
+        "save_changes": "Salvar Alterações",
+        "translation_key_help": "Chave única usada para traduções (ex: iron_sword)",
+        "armor_type": "Tipo de Armadura",
+        "warning_users": "Warning Users",
+        "warning_users_title": "Users Requiring Review",
+        "no_warnings": "No users requiring review at this time.",
+        "delete_duplicates": "Delete Newer Accounts",
+        "ip_address": "IP Address",
+        "created_at": "Created At",
+        "last_login": "Last Login",
+        "required_attribute": "Required Attribute",
+        "required_amount": "Required Amount",
+        "none": "None",
+        "duplicate_ip_warning": "This IP address is associated with multiple accounts. Your account will be reviewed by admins.",
+        "messages": "Mensagens",
+        "npc_added": "NPC added successfully!",
+        "npc_updated": "NPC updated successfully!",
+        "npc_deleted": "NPC deleted successfully!",
+        "npc_key_help": "Chave única usada para traduções (ex: skeleton)",
+        "level": "Nível",
+        "faction": "Povoado",
+        "healthpoints": "HP",
+        "max_healthpoints": "Max HP",
+        "weapon": "Arma",
+        "armor": "Armadura",
+        "min_xp": "min xp",
+        "max_xp": "max xp",
+        "min_gold": "min gold",
+        "max_gold": "max gold",
+        "image": "Imagem",
+        "reputation": "Reputação",
+        "attributes": "Atributos",
+        "forca": "Força",
+        "destreza": "Destreza",
+        "inteligencia": "Inteligência",
+        "devocao": "Devoção",
+        "add_npc": "Adicionar NPC",
+        "cancel": "Cancelar",
+        "update_npc": "Atualizar NPC",
+        "manage_magic_items": "Gerenciar Itens Mágicos",
+        "add_magic_item": "Adicionar Item Mágico",
+        "edit_magic_item": "Editar Item Mágico",
+        "no_magic_items": "Nenhum item mágico encontrado"
+    },
+    "general": {
+        "cancel": "Cancelar",
+        "footer": "© 2025 Ordan"
+    }
+}
