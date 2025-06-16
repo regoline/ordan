@@ -1,0 +1,119 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-4 max-w-4xl mx-auto">
+    <!-- Result Header -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3">
+            <img src="{{ url_for('static', filename='images/icons/mining.png') }}" width="40" alt="Mining">
+            <h2 class="text-xl sm:text-2xl font-bold">Mining Results</h2>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-gray-400">Resources spent:</p>
+                <p class="text-xl font-bold text-white">{{ resources_used }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400">Total Mining Levels gained:</p>
+                <p class="text-xl font-bold text-green-500">{{ total_mining_level }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400">Total Gold gained:</p>
+                <p class="text-xl font-bold text-yellow-400">
+                    {{ total_gold }} <span class="text-sm text-gray-400">({{ owner_gold }} to lottery)</span>
+                </p>
+            </div>
+            <div>
+                <p class="text-gray-400">Total Diamonds gained:</p>
+                <p class="text-xl font-bold text-blue-300">
+                    {{ total_diamonds }} <span class="text-sm text-gray-400">({{ owner_diamonds }} to lottery)</span>
+                </p>
+            </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-700">
+            <p class="text-gray-400">Streak Bonus:</p>
+            <p class="text-xl font-bold text-purple-400">{{ streak_bonus }}%</p>
+        </div>
+    </div>
+
+    <!-- Detailed Results -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="{{ url_for('static', filename='images/icons/details.png') }}" width="30" alt="Details">
+            <h3 class="text-lg font-semibold">Detailed Results</h3>
+        </div>
+        
+        <div class="space-y-3">
+            {% for result in mining_results %}
+            <div class="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                <p class="mb-2">
+                    <strong>Mining Action {{ loop.index }}:</strong> You mined and got 
+                    <strong class="text-green-400">{{ result.mining_gain }} XP</strong> and 
+                    <strong class="text-yellow-400">{{ result.gold_gain }}</strong> gold.
+                    {% if result.crit %}
+                        <span class="text-yellow-300 ml-2">(Critical Hit!)</span>
+                    {% endif %}
+                    {% if result.broke_tool %}
+                        <span class="text-red-400 ml-2">(Your tool broke! Gold lost.)</span>
+                    {% endif %}
+                </p>
+                {% if result.diamonds_gain > 0 %}
+                <p class="flex items-center text-blue-300 font-medium">
+                    <span class="text-2xl mr-2">💎</span>
+                    You found <strong class="text-white">{{ result.diamonds_gain }}</strong> diamond{{ 's' if result.diamonds_gain > 1 else '' }}!
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- New Stats -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">Your New Stats</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+                <p class="text-gray-400">Mining Level:</p>
+                <p class="text-xl font-bold text-white">{{ current_user.character.mining_level }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400">Gold:</p>
+                <p class="text-xl font-bold text-yellow-400">{{ current_user.character.gold }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400">Diamonds:</p>
+                <p class="text-xl font-bold text-blue-300">{{ current_user.character.diamonds }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400">Resources left:</p>
+                <p class="text-xl font-bold text-white">{{ current_user.character.resource }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lottery Info -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <p class="text-gray-300 mb-4">The mine owner takes 10% of all resources mined, which goes into the mining lottery pool.</p>
+        <a href="{{ url_for('game.lottery') }}" 
+           class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors">
+            View Mining Lottery
+        </a>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="{{ url_for('game.mine') }}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-center transition-colors">
+            Mine Again
+        </a>
+        <a href="{{ url_for('game.dashboard') }}" 
+           class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg text-center transition-colors">
+            Return to Dashboard
+        </a>
+    </div>
+</section>
+{% endblock %}

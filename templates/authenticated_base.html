@@ -1,0 +1,271 @@
+{% extends "base_auth.html" %}
+<body class="{% if current_user.is_authenticated %}authenticated{% endif %} {% if request.endpoint == 'character_creation' %}character-creation{% endif %}">
+{% block body %}
+
+    <header>
+        <button class="mobile-menu-toggle">☰</button>
+        <img src="../static/images/logo_small.png">
+        <nav>
+            <a href="{{ url_for('game.dashboard') }}">{{ translations.get('navigation', {}).get('dashboard', 'Dashboard') }}</a>
+            <a href="{{ url_for('auth.logout') }}">{{ translations.get('navigation', {}).get('logout', 'Log Out') }}</a>
+        </nav>
+        <div class="language-switcher">
+            {% for code, name in config.AVAILABLE_LANGUAGES.items() %}
+                <a href="{{ url_for('auth.set_language', language=code) }}" 
+                   class="{% if session.get('language', config.DEFAULT_LANGUAGE) == code %}active{% endif %}">
+                    {{ name }}
+                </a>
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			<div class="flash-messages">
+				{% for category, message in messages %}
+					<div class="flash {{ category }}">{{ message }}</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+	{% endwith %}
+
+    <div class="app-container">
+        <aside class="app-sidebar">
+            <!-- Left sidebar content remains the same -->
+            <div class="character-summary">
+				{% if current_user.is_admin %}
+					<a href="{{ url_for('game.admin_panel') }}" class="sidebar-link">
+						{{ translations.admin.title }}
+					</a>
+				{% endif %}
+				
+                {% if current_user.character %}
+                 <a href="{{ url_for('game.dashboard') }}" class="character-name">
+                        {{ current_user.character.name }} 
+                    </a>
+                    <img src="{{ url_for('static', filename='images/' + current_user.character.faction|lower + '.png') }}" 
+                         alt="{{ current_user.character.name }}" 
+                         class="sidebar-avatar">
+                         
+					
+                   
+                    
+                 
+                    <div class="badge-container">
+                        <div class="faction-badge sidebar-badge" style="color: {{ g.translations['game']['factions'][current_user.character.faction].color }}; border-color: {{ g.translations['game']['factions'][current_user.character.faction].color }};">
+                            {{ g.translations['game']['factions'][current_user.character.faction].name }}
+                        </div>
+                    </div>
+                    
+					
+					<!-- In your sidebar section -->
+					<div class="sidebar-healing">
+						<div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                  
+                    <img src="{{ url_for('static', filename='images/icons/' + ('vivo.png' if not current_user.character.is_dead else 'morto.png')) }}" 
+						alt="Status" width="25">
+						 {% if current_user.character.is_dead %}
+                    <h4>Morto</h4>
+                    {% else %}
+                    <h4>Vivo</h4>
+                    {% endif %}
+					</div>
+						{% if current_user.character %}
+							{% if current_user.character.is_dead %}
+								<form action="{{ url_for('game.heal') }}" method="POST" class="sidebar-heal-form">
+									<input type="hidden" name="amount" value="{{ current_user.character.max_healthpoints }}">
+									<button type="submit" class="btn btn-revive" 
+											{% if current_user.character.gold < current_user.character.max_healthpoints %}disabled{% endif %}>
+										Revive ({{ current_user.character.max_healthpoints }} gold)
+									</button>
+								</form>
+							{% elif current_user.character.healthpoints < current_user.character.max_healthpoints %}
+								<form action="{{ url_for('game.heal') }}" method="POST" class="sidebar-heal-form">
+									<input type="hidden" name="amount" value="10"> <!-- Default heal amount -->
+									<button type="submit" class="btn btn-heal">
+										Heal 10 HP (10 gold)
+									</button>
+								</form>
+							{% endif %}
+						{% endif %}
+					</div>
+                    
+                    <div class="character-id">
+                        <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
+							<img src="../static/images/icons/info.png" width="30">
+                        <h4>Info</h4>
+                        </div>
+                        ID: {{ current_user.character.id }}<br>
+                        {{ translations.dashboard.level }}: {{ current_user.character.level }}<br>
+                        HP: {{ current_user.character.healthpoints }}/{{ current_user.character.max_healthpoints }}<br>
+                        {{ translations.dashboard.reputation }}: {{ current_user.character.reputation }}<br>
+                        {{ translations.get('dashboard', {}).get('xp', 'XP') }}:
+                        {{ current_user.character.current_xp }}/{{ current_user.character.xp_to_next_level }}<br>
+                        <div class="xp-bar">
+						<div class="xp-progress" 
+							 style="width: {{ (current_user.character.current_xp / current_user.character.xp_to_next_level) * 100 }}%">
+						</div>
+					</div>
+                        <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
+							<img src="../static/images/icons/gold.png" width="30">
+                        <h4>Recursos</h4>
+                        </div>
+                        {{ g.translations['game']['factions'][current_user.character.faction]['stats']['resource'] }}: 
+                        {{ current_user.character.resource }}/{{ current_user.character.resource_max }}<br>
+                        {{ translations.dashboard.gold }}: {{ current_user.character.gold }}<br>
+                        {{ translations.dashboard.diamonds }}: {{ current_user.character.diamonds }}<br>
+                         {% if translations and translations.game and translations.game.attributes %}
+                         <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
+							<img src="../static/images/icons/atributos.png" width="30">
+                        <h4>{{ translations.game.attributes.title }}</h4>	
+                        </div>
+							{% if current_user.is_authenticated and current_user.character %}
+						<img src="{{ url_for('static', filename='images/status_dex.png') }}" alt="Dex" width="8%">
+                        <span>{{ translations.game.attributes.destreza }}:
+                        {{ "%.3f"|format(current_user.character.destreza) }}</span><br>
+                        
+                        <img src="{{ url_for('static', filename='images/status_forca.png') }}" alt="Str" width="8%">
+                        <span>{{ translations.game.attributes.forca }}:
+                        {{ "%.3f"|format(current_user.character.forca) }}</span><br>
+                        
+                        <img src="{{ url_for('static', filename='images/status_int.png') }}" alt="Int" width="8%">
+                        <span>{{ translations.game.attributes.inteligencia }}:
+                        {{ "%.3f"|format(current_user.character.inteligencia) }}</span><br>
+                        
+                        <img src="{{ url_for('static', filename='images/status_devocao.png') }}" alt="Devotion" width="8%">
+                        <span>{{ translations.game.attributes.devocao }}:
+                        {{ "%.3f"|format(current_user.character.devocao) }}</span><br>
+                    {% else %}
+                        <p style="color: #ecf0f1; font-size: 0.85rem;">{{ translations.dashboard.create_character_first }}</p>
+                    {% endif %}
+                    {% endif %}
+                    <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
+							<img src="../static/images/icons/ranking.png" width="30">
+                        <h4>{{ translations.rankings.title }}</h4>	
+                        </div>
+                    
+					<span>XP: #{{ user_xp_rank or "N/A" }}</span><br>
+					<span>Level: #{{ user_level_rank or "N/A" }}</span><br>
+					<span>PvP Mortes: #{{ user_kills_rank or "N/A" }}</span><br>
+					<span>PvP Derrotas: #{{ user_deaths_rank or "N/A" }}</span><br>
+				
+				
+				
+							
+                        
+                    </div>
+                {% endif %}
+            </div>
+            
+            
+        </aside>
+
+        <main class="app-main">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- New Right Sidebar -->
+        <aside class="app-sidebar-right">
+			<div class="sidebar-section">
+				<h4>Player Search</h4>
+				<form class="player-search-form" action="{{ url_for('game.search_players') }}" method="GET">
+					<input type="text" name="query" placeholder="{{ translations.get('search', {}).get('player_placeholder', 'Search players...') }}" 
+						   required
+						   minlength="2"
+						   maxlength="20">
+					<button type="submit">
+						<i class="search-icon">🔍</i>
+					</button>
+				</form>
+			</div>
+			
+            <div class="sidebar-section">
+                <h4>Quick Navigation</h4>
+                <ul class="quick-links">
+                    <!-- Add these links to your navigation menu -->
+                    
+                    <li> <div class="skills-header">
+							<img src="../static/images/icons/mapa.png" width="35">
+						<strong><a href="{{ url_for('game.dashboard') }}" class="nav-link">
+						{{ translations.navigation.cidade }}
+						</a></strong></div></li>
+						 <li><div class="skills-header">
+						<img src="../static/images/icons/profile.png" width="35">
+						<a href="{{ url_for('game.view_character', character_id=current_user.character.id) if current_user.character else '#' }}">
+                        {{ translations.get('navigation', {}).get('profile', 'Profile') }}
+                    </a></div></li>
+                    <li><div class="skills-header">
+						<img src="../static/images/icons/mailbox.png" width="35">
+						<a href="{{ url_for('game.mailbox') }}" class="nav-link">
+							{{ translations.get('navigation', {}).get('mailbox', 'Mailbox') }}
+							{% if unread_message_count > 0 %}
+								<span class="unread-badge">{{ unread_message_count }}</span>
+							{% endif %}
+						</a>
+					</div></li>
+                    
+                    
+                    <li> <div class="skills-header">
+							<img src="../static/images/icons/academy.png" width="35">
+						<a href="{{ url_for('game.academy') }}" class="nav-link">
+						{{ translations.navigation.academy }}
+						</a></div></li>
+                   <li> <div class="skills-header">
+							<img src="../static/images/icons/inventario.png" width="35">
+						<a href="{{ url_for('game.shop') }}" class="nav-link">
+						{{ translations.shop.title }}
+						</a></div></li>
+						
+						<li><div class="skills-header">
+							<img src="../static/images/icons/market.png" width="35">
+							<a href="{{ url_for('game.market') }}" class="nav-link">
+							{{ translations.game.market.title if translations and translations.game.market and translations.game.market else 'Market' }}
+						</a></div></li>
+						
+						<li><div class="skills-header">
+							<img src="../static/images/icons/arena.png" width="35">
+							<a href="{{ url_for('game.fights') }}" class="nav-link">
+							{{ translations.game.fights.title if translations and translations.game.fights and translations.game.fights else 'Batalhas' }}
+						</a></div></li>
+                   
+                </ul>
+            </div>
+<!--
+            <div class="sidebar-section">
+				<h4>Recent Players</h4>
+				<ul class="recent-players">
+					{% for player in recent_players %}
+						<li>
+							<a href="{{ url_for('game.view_character', character_id=player.id) }}">
+								{{ player.name }} (Lvl {{ player.level }})
+							</a>
+						</li>
+					{% else %}
+						<li class="empty-message">
+							{{ translations.get('search', {}).get('no_recent_players', 'No recent players') }}
+						</li>
+					{% endfor %}
+				</ul>
+			</div> -->
+			
+			<div class="sidebar-section">
+				<a href="{{ url_for('game.online_players') }}" class="online-players-link">
+					{{ translations.get('game', {}).get('online', {}).get('title', 'Online Players') }} ({{ online_count }})
+				</a>
+			</div>
+			
+        </aside>
+    </div>
+
+    <footer>
+        <p>{{ translations.get('general', {}).get('footer', '© 2023 Batalha na Selva') }}</p>
+    </footer>
+
+    <script>
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.app-sidebar').classList.toggle('active');
+            document.querySelector('.app-sidebar-right').classList.toggle('active');
+        });
+    </script>
+{% endblock %}

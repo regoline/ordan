@@ -1,0 +1,98 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-4 max-w-4xl mx-auto">
+    <!-- Fight Header -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3">
+            <img src="{{ url_for('static', filename='images/icons/battle.png') }}" width="40">
+            <h2 class="text-xl sm:text-2xl font-bold">
+                {{ translations.get('fight', {}).get('title', 'Battle') }}: 
+                <span class="text-blue-400">{{ current_user.character.name }}</span> vs 
+                <span class="text-red-400">{{ opponent.name }}</span>
+            </h2>
+        </div>
+    </div>
+    
+    <!-- Combatants -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex flex-col sm:flex-row justify-around items-center gap-6">
+            <!-- Player -->
+            <div class="bg-gray-700/50 p-4 rounded-lg text-center w-full sm:w-1/3">
+                <img src="{{ url_for('static', filename='images/' + current_user.character.faction|lower + '.png') }}" 
+                     alt="{{ current_user.character.name }}"
+                     class="w-20 h-20 mx-auto mb-3 object-contain">
+                <h3 class="text-lg font-semibold 
+                    {% if current_user.character.faction|lower == 'veylan' %}text-purple-500
+                    {% elif current_user.character.faction|lower == 'urghan' %}text-amber-700
+                    {% elif current_user.character.faction|lower == 'aureen' %}text-blue-500
+                    {% else %}text-green-600{% endif %}">
+                    {{ current_user.character.name }}
+                </h3>
+                <div class="w-full bg-gray-600 h-2 rounded-full mt-2">
+                    <div class="bg-red-500 h-full rounded-full" 
+                         style="width: {{ (current_user.character.healthpoints / current_user.character.max_healthpoints) * 100 }}%">
+                    </div>
+                </div>
+                <p class="text-sm mt-1">
+                    HP: {{ current_user.character.healthpoints }}/{{ current_user.character.max_healthpoints }}
+                </p>
+            </div>
+            
+            <!-- VS -->
+            <div class="text-center">
+                <div class="bg-gray-700 rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+                    <span class="text-xl font-bold">VS</span>
+                </div>
+            </div>
+            
+            <!-- Opponent -->
+            <div class="bg-gray-700/50 p-4 rounded-lg text-center w-full sm:w-1/3">
+                <img src="{{ url_for('static', filename='images/' + opponent.faction|lower + '.png') }}" 
+                     alt="{{ opponent.name }}"
+                     class="w-20 h-20 mx-auto mb-3 object-contain">
+                <h3 class="text-lg font-semibold 
+                    {% if opponent.faction|lower == 'veylan' %}text-purple-500
+                    {% elif opponent.faction|lower == 'urghan' %}text-amber-700
+                    {% elif opponent.faction|lower == 'aureen' %}text-blue-500
+                    {% else %}text-green-600{% endif %}">
+                    {{ opponent.name }}
+                </h3>
+                <div class="w-full bg-gray-600 h-2 rounded-full mt-2">
+                    <div class="bg-red-500 h-full rounded-full" 
+                         style="width: {{ (opponent.healthpoints / opponent.max_healthpoints) * 100 }}%">
+                    </div>
+                </div>
+                <p class="text-sm mt-1">
+                    HP: {{ opponent.healthpoints }}/{{ opponent.max_healthpoints }}
+                </p>
+                {% if opponent.is_dead %}
+                    <p class="text-red-500 font-bold mt-2">DEFEATED</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fight Action -->
+    <div class="text-center">
+        {% if not opponent.is_dead %}
+            <form action="{{ url_for('game.process_fight', opponent_id=opponent.id) }}" method="POST">
+                <button type="submit" 
+                        class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg text-lg font-bold transition-colors">
+                    {{ translations.get('fight', {}).get('start_fight', 'Start Fight') }}
+                </button>
+            </form>
+        {% else %}
+            <div class="bg-gray-800/50 rounded-lg p-4 max-w-md mx-auto">
+                <p class="text-gray-400 italic">
+                    {{ opponent.name }} is already defeated!
+                </p>
+                <a href="{{ url_for('game.dashboard') }}" 
+                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg mt-3 transition-colors">
+                    Return to Dashboard
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

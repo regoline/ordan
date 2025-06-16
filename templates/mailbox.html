@@ -1,0 +1,103 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-2 max-w-5xl mx-auto">
+    <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Mailbox</h2>
+        
+        <div class="messages-list">
+            {% if messages %}
+                <!-- Desktop table view (hidden on mobile) -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-700">
+                                <th class="p-3 text-left">From</th>
+                                <th class="p-3 text-left">Subject</th>
+                                <th class="p-3 text-left">Received</th>
+                                <th class="p-3 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for message in messages %}
+                            <tr class="{% if not message.is_read %}font-bold bg-gray-700/30{% endif %} border-b border-gray-700 hover:bg-gray-700/50">
+                                <td class="p-3">
+                                    <a href="{{ url_for('game.view_character', character_id=message.sender.id) }}" class="text-blue-400 hover:text-blue-300">
+                                        {{ message.sender.name }}
+                                    </a>
+                                    {% if message.is_admin_message %}
+                                        <span class="bg-red-500 text-white px-2 py-0.5 rounded text-xs ml-2">Admin</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-3">
+                                    <a href="{{ url_for('game.view_message', message_id=message.id) }}" class="text-blue-400 hover:text-blue-300">
+                                        {{ message.subject }}
+                                    </a>
+                                </td>
+                                <td class="p-3">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="p-3 flex items-center gap-2">
+                                    <a href="{{ url_for('game.view_message', message_id=message.id) }}" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
+                                        View
+                                    </a>
+                                    <form method="POST" action="{{ url_for('game.delete_message', message_id=message.id) }}" class="inline">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm" onclick="return confirm('Delete this message?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                    {% if not message.is_read %}
+                                    <span class="bg-green-500 text-white px-2 py-0.5 rounded text-xs">New</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile card view (shown on mobile) -->
+                <div class="md:hidden space-y-3">
+                    {% for message in messages %}
+                    <div class="{% if not message.is_read %}font-bold bg-gray-700/30{% endif %} border border-gray-700 rounded-lg p-4 hover:bg-gray-700/50">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <a href="{{ url_for('game.view_character', character_id=message.sender.id) }}" class="text-blue-400 hover:text-blue-300 font-medium">
+                                    {{ message.sender.name }}
+                                </a>
+                                {% if message.is_admin_message %}
+                                    <span class="bg-red-500 text-white px-2 py-0.5 rounded text-xs ml-2">Admin</span>
+                                {% endif %}
+                            </div>
+                            <span class="text-sm text-gray-400">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        
+                        <h3 class="mb-3">
+                            <a href="{{ url_for('game.view_message', message_id=message.id) }}" class="text-blue-400 hover:text-blue-300">
+                                {{ message.subject }}
+                            </a>
+                        </h3>
+                        
+                        <div class="flex items-center gap-2">
+                            <a href="{{ url_for('game.view_message', message_id=message.id) }}" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm flex-1 text-center">
+                                View
+                            </a>
+                            <form method="POST" action="{{ url_for('game.delete_message', message_id=message.id) }}" class="inline flex-1">
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm w-full" onclick="return confirm('Delete this message?')">
+                                    Delete
+                                </button>
+                            </form>
+                            {% if not message.is_read %}
+                            <span class="bg-green-500 text-white px-2 py-0.5 rounded text-xs">New</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8 text-gray-400">
+                    <p>Your mailbox is empty</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

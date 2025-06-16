@@ -1,0 +1,124 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-2 sm:p-4">
+    <!-- Arena Header -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold">{{ translations['game']['arena']['title'] }}</h2>
+    </div>
+    
+    <!-- Search Form - Updated for mobile -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <form method="POST" action="{{ url_for('game.arena') }}" class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:gap-4 space-y-3 sm:space-y-0">
+                <div class="flex-1 space-y-1">
+                    <label for="min_level" class="block text-sm sm:text-base text-gray-300">{{ translations['game']['arena']['min_level'] }}</label>
+                    <input type="number" id="min_level" name="min_level" 
+                           min="1" value="{{ min_level }}"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base text-white focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="flex-1 space-y-1">
+                    <label for="max_level" class="block text-sm sm:text-base text-gray-300">{{ translations['game']['arena']['max_level'] }}</label>
+                    <input type="number" id="max_level" name="max_level" 
+                           min="1" value="{{ max_level if max_level else '' }}"
+                           placeholder="{{ translations['game']['arena']['no_limit'] }}"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base text-white focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm sm:text-base">
+                {{ translations['game']['arena']['search'] }}
+            </button>
+        </form>
+    </div>
+    
+    <!-- Results -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6">
+        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{{ translations['game']['arena']['results'] }}</h3>
+        
+        {% if opponents.items %}
+            <div class="overflow-x-auto -mx-2 sm:mx-0">
+                <table class="w-full text-left min-w-full">
+                    <thead class="bg-gray-700 text-gray-300">
+                        <tr>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">{{ translations['game']['arena']['name'] }}</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">{{ translations['game']['arena']['level'] }}</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">{{ translations['game']['arena']['faction'] }}</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">{{ translations['game']['arena']['actions'] }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for opponent in opponents.items %}
+                            <tr class="border-b border-gray-700 hover:bg-gray-700/50 transition-colors">
+                                <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base">
+                                    <a href="{{ url_for('game.view_character', character_id=opponent.id) }}" class="text-blue-400 hover:text-blue-300">
+                                        {{ opponent.name }}
+                                    </a>
+                                </td>
+                                <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base">{{ opponent.level }}</td>
+                                <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base">
+                                    <span class="inline-flex items-center gap-1 sm:gap-2">
+                                        {% if opponent.faction.lower() == 'veylan' %}
+                                        <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-purple-500"></span>
+                                        {% elif opponent.faction.lower() == 'urghan' %}
+                                        <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500"></span>
+                                        {% elif opponent.faction.lower() == 'aureen' %}
+                                        <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500"></span>
+                                        {% elif opponent.faction.lower() == 'camyra' %}
+                                        <span class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500"></span>
+                                        {% endif %}
+                                        <span class="text-xs sm:text-sm">{{ translations['game']['factions'][opponent.faction]['name'] }}</span>
+                                    </span>
+                                </td>
+                                <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base">
+                                    <a href="{{ url_for('game.fight', opponent_id=opponent.id) }}" 
+                                       class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-lg transition-colors inline-block text-xs sm:text-sm">
+                                        {{ translations['game']['arena']['attack'] }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center mt-4 sm:mt-6 space-x-1 sm:space-x-2">
+                {% if opponents.has_prev %}
+                    <a href="{{ url_for('game.arena', page=opponents.prev_num, min_level=min_level, max_level=max_level) }}"
+                       class="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-lg transition-colors text-xs sm:text-sm">
+                        &laquo;
+                    </a>
+                {% else %}
+                    <span class="bg-gray-700/50 text-gray-500 px-2 py-1 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm">&laquo;</span>
+                {% endif %}
+                
+                {% for page_num in opponents.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+                    {% if page_num %}
+                        {% if page_num == opponents.page %}
+                            <span class="bg-blue-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('game.arena', page=page_num, min_level=min_level, max_level=max_level) }}"
+                               class="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-lg transition-colors text-xs sm:text-sm">
+                                {{ page_num }}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <span class="px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm">...</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if opponents.has_next %}
+                    <a href="{{ url_for('game.arena', page=opponents.next_num, min_level=min_level, max_level=max_level) }}"
+                       class="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-lg transition-colors text-xs sm:text-sm">
+                        &raquo;
+                    </a>
+                {% else %}
+                    <span class="bg-gray-700/50 text-gray-500 px-2 py-1 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm">&raquo;</span>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-gray-400 py-3 sm:py-4 text-sm sm:text-base">{{ translations['game']['arena']['no_opponents'] }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

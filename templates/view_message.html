@@ -1,0 +1,94 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-2 max-w-5xl mx-auto">
+    <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 mb-6">
+        <!-- Message Header -->
+        <div class="mb-6 pb-4 border-b border-gray-700">
+            <h2 class="text-2xl font-bold">{{ message.subject }}</h2>
+            <div class="flex flex-col sm:flex-row sm:justify-between text-gray-400 text-sm mt-2">
+                <span class="mb-1 sm:mb-0">
+                    From: 
+                    <a href="{{ url_for('game.view_character', character_id=message.sender.id) }}" class="text-blue-400 hover:text-blue-300">
+                        {{ message.sender.name }}
+                    </a>
+                    {% if message.is_admin_message %}
+                        <span class="bg-red-500 text-white px-2 py-0.5 rounded text-xs ml-2">Admin</span>
+                    {% endif %}
+                </span>
+                <span>Received: {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+        </div>
+        
+        <!-- Message Body -->
+        <div class="bg-gray-700/50 p-4 rounded-lg mb-6 whitespace-pre-line">
+            {{ message.body|safe }}
+        </div>
+        
+        <!-- Message Actions -->
+        <div class="flex flex-wrap gap-2 mb-8">
+            <a href="{{ url_for('game.send_message', recipient_id=message.sender.id, parent_message_id=message.id) }}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm">
+                Reply
+            </a>
+            
+            <form method="POST" action="{{ url_for('game.delete_message', message_id=message.id) }}" class="inline">
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded text-sm" 
+                        onclick="return confirm('Delete this message?')">
+                    Delete
+                </button>
+            </form>
+            
+            <button onclick="document.getElementById('report-form').classList.toggle('hidden')" 
+                class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded text-sm">
+                Report Message
+            </button>
+            
+            <a href="{{ url_for('game.mailbox') }}" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded text-sm">
+                Back to Mailbox
+            </a>
+        </div>
+        
+        <!-- Report Form (hidden by default) -->
+        <div id="report-form" class="hidden mt-4 bg-gray-700/50 p-4 rounded-lg">
+            <form method="POST" action="{{ url_for('game.report_message', message_id=message.id) }}">
+                <textarea name="reason" required placeholder="Why are you reporting this message?"
+                          class="w-full p-3 bg-gray-800 rounded text-white text-sm mb-3 min-h-[100px]"></textarea>
+                <div class="flex gap-2">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm">
+                        Submit Report
+                    </button>
+                    <button type="button" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded text-sm"
+                            onclick="document.getElementById('report-form').classList.add('hidden')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Replies Section -->
+        {% if replies %}
+        <div class="pt-6 border-t border-gray-700">
+            <h3 class="text-xl font-bold mb-4">Replies</h3>
+            
+            {% for reply in replies %}
+            <div class="bg-gray-700/30 p-4 rounded-lg mb-4">
+                <div class="flex flex-col sm:flex-row sm:justify-between text-gray-400 text-sm mb-2">
+                    <span>
+                        From: 
+                        <a href="{{ url_for('game.view_character', character_id=reply.sender.id) }}" class="text-blue-400 hover:text-blue-300">
+                            {{ reply.sender.name }}
+                        </a>
+                    </span>
+                    <span>{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="whitespace-pre-line">
+                    {{ reply.body|safe }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full max-w-4xl mx-auto p-4 md:p-6">
+    <!-- Result Header -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center justify-center gap-3">
+            <img src="{{ url_for('static', filename='images/icons/battle.png') }}" width="40" alt="Battle">
+            <h2 class="text-2xl font-bold">{{ translations.get('fight', {}).get('result', 'Battle Result') }}</h2>
+        </div>
+    </div>
+
+    <!-- Winner Announcement -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6 text-center">
+        {% if winner == "player" %}
+            <div class="flex flex-col items-center">
+                <img src="{{ url_for('static', filename='images/icons/winner.png') }}" 
+                     alt="Winner" class="w-20 h-20 mb-4">
+                <h3 class="text-2xl font-bold text-green-500">
+                    {{ translations.get('npc_fight', {}).get('you_won', 'You won the battle!') }}
+                </h3>
+            </div>
+        {% else %}
+            <div class="flex flex-col items-center">
+                <img src="{{ url_for('static', filename='images/icons/rip.png') }}" 
+                     alt="Defeated" class="w-20 h-20 mb-4">
+                <h3 class="text-2xl font-bold text-red-500">
+                    {{ translations.get('npc_fight', {}).get('you_lost', 'You were defeated!') }}
+                </h3>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- NPC Info -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6 text-center">
+        <div class="flex flex-col items-center">
+            <img src="{{ url_for('static', filename='images/npcs/' + npc.image) }}" 
+                 alt="{{ translations['game']['npcs'][npc.translation_key]['name'] }}" 
+                 class="w-20 h-20 rounded-full border-4 border-gray-700 mb-3">
+            <h4 class="text-xl font-semibold">
+                {{ translations['game']['npcs'][npc.translation_key]['name'] }}
+            </h4>
+        </div>
+    </div>
+
+    <!-- Battle Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <!-- Reputation Changes -->
+        <div class="bg-gray-800/50 rounded-lg p-4">
+            <h4 class="text-lg font-semibold mb-3 border-b border-gray-700 pb-2">
+                {{ translations.get('fight', {}).get('reputation_changes', 'Reputation Changes') }}
+            </h4>
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">{{ current_user.character.name }}:</span>
+                    <div class="flex items-center gap-2">
+                        <span class="{% if reputation_change >= 0 %}text-green-500{% else %}text-red-500{% endif %} font-bold">
+                            {{ "+" if reputation_change >= 0 }}{{ reputation_change }}
+                        </span>
+                        <span class="text-gray-400 text-sm">
+                            ({{ translations.get('fight', {}).get('new', 'New') }}: {{ current_user.character.reputation }})
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if winner == "player" %}
+        <!-- Reward Changes -->
+        <div class="bg-gray-800/50 rounded-lg p-4">
+            <h4 class="text-lg font-semibold mb-3 border-b border-gray-700 pb-2">
+                {{ translations.get('npc_fight', {}).get('rewards', 'Rewards') }}
+            </h4>
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">{{ translations.get('npc_fight', {}).get('xp_gained', 'XP Gained') }}:</span>
+                    <span class="text-green-400 font-bold">{{ xp_gain }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">{{ translations.get('npc_fight', {}).get('gold_gained', 'Gold Gained') }}:</span>
+                    <span class="text-yellow-400 font-bold">{{ gold_gain }}</span>
+                </div>
+                {% if heal_message %}
+                <div class="text-green-400">
+                    {{ heal_message }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Fight Log -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="{{ url_for('static', filename='images/icons/log.png') }}" width="30" alt="Log">
+            <h4 class="text-lg font-semibold">{{ translations.get('fight', {}).get('log', 'Battle Log') }}:</h4>
+        </div>
+        <div class="bg-gray-900 rounded-lg p-4">
+            <ul class="space-y-2 font-mono text-sm">
+                {% for entry in fight_log %}
+                    <li class="border-b border-gray-800/50 pb-2 last:border-0 last:pb-0">{{ entry|safe }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="{{ url_for('game.dashboard') }}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-center transition-colors">
+            {{ translations.get('fight', {}).get('return', 'Return to Dashboard') }}
+        </a>
+        
+        <a href="{{ url_for('game.fight_npc', npc_id=npc.id) }}" 
+           class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg text-center transition-colors">
+            {{ translations.get('npc_fight', {}).get('fight_again', 'Fight Again') }}
+        </a>
+    </div>
+</section>
+{% endblock %}

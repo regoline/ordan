@@ -1,0 +1,332 @@
+{% extends "base_auth2.html" %}
+<body class="{% if current_user.is_authenticated %}authenticated{% endif %} {% if request.endpoint == 'character_creation' %}character-creation{% endif %}">
+{% block body %}
+
+    <header class="fixed top-0 left-0 right-0 bg-header-bg backdrop-blur-sm shadow-md z-40 h-16 px-4 flex items-center justify-between">
+        <button class="mobile-menu-toggle md:hidden text-white text-2xl" onclick="toggleSidebar('left')">☰</button>
+        <img src="../static/images/logo.png" class="h-10">
+        <div class="flex items-center gap-4">
+            <button class="mobile-menu-toggle md:hidden text-white text-2xl" onclick="toggleSidebar('right')">⚙️</button>
+            <nav class="hidden md:flex gap-4">
+                <a href="{{ url_for('game.dashboard') }}" class="text-gray-200 hover:text-secondary transition-colors">
+                    {{ translations.get('navigation', {}).get('dashboard', 'Dashboard') }}
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="text-gray-200 hover:text-secondary transition-colors">
+                    {{ translations.get('navigation', {}).get('logout', 'Log Out') }}
+                </a>
+            </nav>
+            <div class="language-switcher hidden md:block">
+                <select onchange="location = this.value;" class="bg-input-bg text-gray-200 text-sm border border-input-border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-input-focus">
+                    {% for code, name in config.AVAILABLE_LANGUAGES.items() %}
+                        <option value="{{ url_for('auth.set_language', language=code) }}"
+                            {% if session.get('language', config.DEFAULT_LANGUAGE) == code %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages fixed top-20 right-5 z-[1000] flex flex-col gap-2 max-w-md w-full">
+                {% for category, message in messages %}
+                    <div class="flash px-5 py-3 mb-2 rounded shadow-md text-white relative animate-[slideIn_1.3s_ease-out] 
+                        {% if category == 'success' %}bg-green-700{% endif %}
+                        {% if category == 'error' %}bg-error{% endif %}
+                        {% if category == 'warning' %}bg-amber-600{% endif %}
+                        {% if category == 'info' %}bg-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="app-container flex pt-16 min-h-screen rounded-lg p-6 mb-6">
+        <!-- Left Sidebar - Hidden on mobile by default -->
+        <aside id="left-sidebar" class="app-sidebar w-64 bg-header-bg fixed left-0 top-16  bottom-0 z-30 overflow-y-auto transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:relative md:left-auto">
+            <div class="character-summary p-4">
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('game.admin_panel') }}" class="sidebar-link block text-gray-200 hover:bg-gray-700 rounded p-2 mb-2">
+                        {{ translations.admin.title }}
+                    </a>
+                {% endif %}
+                
+                {% if current_user.character %}
+                    <a href="{{ url_for('game.dashboard') }}" class="character-name block text-center text-xl font-bold text-white mb-2">
+                        {{ current_user.character.name }} 
+                    </a>
+                    <img src="{{ url_for('static', filename='images/' + current_user.character.faction|lower + '.png') }}" 
+                         alt="{{ current_user.character.name }}" 
+                         class="sidebar-avatar w-20 h-20 rounded-full border-2 border-white mx-auto mb-2">
+                    
+                    <div class="badge-container flex justify-center mb-4">
+                        <div class="faction-badge px-3 py-1 rounded-full border-2 text-sm font-bold" 
+                             style="color: {{ g.translations['game']['factions'][current_user.character.faction].color }}; border-color: {{ g.translations['game']['factions'][current_user.character.faction].color }};">
+                            {{ g.translations['game']['factions'][current_user.character.faction].name }}
+                        </div>
+                    </div>
+                    
+                    <!-- Health Status -->
+                    <div class="sidebar-healing bg-gray-800 rounded p-3 mb-4">
+                        <div class="flex justify-center items-center gap-2">
+                            <img src="{{ url_for('static', filename='images/icons/' + ('vivo.png' if not current_user.character.is_dead else 'morto.png')) }}" 
+                                alt="Status" width="25">
+                            {% if current_user.character.is_dead %}
+                                <h4 class="font-bold">Morto</h4>
+                            {% else %}
+                                <h4 class="font-bold">Vivo</h4>
+                            {% endif %}
+                        </div>
+                        {% if current_user.character %}
+                            {% if current_user.character.is_dead %}
+                                <form action="{{ url_for('game.heal') }}" method="POST" class="mt-2">
+                                    <input type="hidden" name="amount" value="{{ current_user.character.max_healthpoints }}">
+                                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-sm disabled:opacity-50"
+                                            {% if current_user.character.gold < current_user.character.max_healthpoints %}disabled{% endif %}>
+                                        Revive ({{ current_user.character.max_healthpoints }} gold)
+                                    </button>
+                                </form>
+                            {% elif current_user.character.healthpoints < current_user.character.max_healthpoints %}
+                                <form action="{{ url_for('game.heal') }}" method="POST" class="mt-2">
+                                    <input type="hidden" name="amount" value="10">
+                                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded text-sm">
+                                        Heal 10 HP (10 gold)
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Character Info -->
+                    <div class="character-id bg-gray-800/50 rounded p-3 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <img src="../static/images/icons/info.png" width="25">
+                            <h4 class="font-bold">Info</h4>
+                        </div>
+                        <div class="text-sm space-y-1">
+                            <div>ID: {{ current_user.character.id }}</div>
+                            <div>{{ translations.dashboard.level }}: {{ current_user.character.level }}</div>
+                            <div>HP: {{ current_user.character.healthpoints }}/{{ current_user.character.max_healthpoints }}</div>
+                            <div>{{ translations.dashboard.reputation }}: {{ current_user.character.reputation }}</div>
+                            <div>{{ translations.get('dashboard', {}).get('xp', 'XP') }}: {{ current_user.character.current_xp }}/{{ current_user.character.xp_to_next_level }}</div>
+                            <div class="xp-bar bg-gray-700 h-2 rounded-full mt-1 mb-2">
+                                <div class="xp-progress bg-green-500 h-full rounded-full" 
+                                     style="width: {{ (current_user.character.current_xp / current_user.character.xp_to_next_level) * 100 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 mt-3 mb-2">
+                            <img src="../static/images/icons/gold.png" width="25">
+                            <h4 class="font-bold">Recursos</h4>
+                        </div>
+                        <div class="text-sm space-y-1">
+                            <div>{{ g.translations['game']['factions'][current_user.character.faction]['stats']['resource'] }}: {{ current_user.character.resource }}/{{ current_user.character.resource_max }}</div>
+                            <div>{{ translations.dashboard.gold }}: {{ current_user.character.gold }}</div>
+                            <div>{{ translations.dashboard.diamonds }}: {{ current_user.character.diamonds }}</div>
+                        </div>
+                        
+                        {% if translations and translations.game and translations.game.attributes %}
+                            <div class="flex items-center gap-2 mt-3 mb-2">
+                                <img src="../static/images/icons/atributos.png" width="25">
+                                <h4 class="font-bold">{{ translations.game.attributes.title }}</h4>	
+                            </div>
+                            {% if current_user.is_authenticated and current_user.character %}
+                                <div class="text-sm space-y-1">
+                                    <div class="flex items-center gap-1">
+                                        <img src="{{ url_for('static', filename='images/status_dex.png') }}" alt="Dex" width="20">
+                                        <span>{{ translations.game.attributes.destreza }}: {{ "%.3f"|format(current_user.character.destreza) }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <img src="{{ url_for('static', filename='images/status_forca.png') }}" alt="Str" width="20">
+                                        <span>{{ translations.game.attributes.forca }}: {{ "%.3f"|format(current_user.character.forca) }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <img src="{{ url_for('static', filename='images/status_int.png') }}" alt="Int" width="20">
+                                        <span>{{ translations.game.attributes.inteligencia }}: {{ "%.3f"|format(current_user.character.inteligencia) }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <img src="{{ url_for('static', filename='images/status_devocao.png') }}" alt="Devotion" width="20">
+                                        <span>{{ translations.game.attributes.devocao }}: {{ "%.3f"|format(current_user.character.devocao) }}</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-gray-300 text-sm">{{ translations.dashboard.create_character_first }}</p>
+                            {% endif %}
+                        {% endif %}
+                        
+                        <div class="flex items-center gap-2 mt-3 mb-2">
+                            <img src="../static/images/icons/ranking.png" width="25">
+                            <h4 class="font-bold">{{ translations.rankings.title }}</h4>	
+                        </div>
+                        <div class="text-sm space-y-1">
+                            <div>XP: #{{ user_xp_rank or "N/A" }}</div>
+                            <div>Level: #{{ user_level_rank or "N/A" }}</div>
+                            <div>PvP Mortes: #{{ user_kills_rank or "N/A" }}</div>
+                            <div>PvP Derrotas: #{{ user_deaths_rank or "N/A" }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main flex-1 p-4 transition-all duration-300">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Right Sidebar - Hidden on mobile by default -->
+        <aside id="right-sidebar" class="app-sidebar-right  w-64 bg-header-bg fixed right-0 top-16 bottom-0 z-30 overflow-y-auto transition-transform duration-300 transform translate-x-full md:translate-x-0 md:relative md:right-auto">
+            <div class="sidebar-section p-4">
+                <h4 class="font-bold text-lg mb-2 text-white">Player Search</h4>
+                <form class="player-search-form" action="{{ url_for('game.search_players') }}" method="GET">
+                    <div class="flex">
+                        <input type="text" name="query" 
+                               class="flex-1 bg-input-bg text-gray-200 p-2 rounded-l focus:outline-none focus:ring-1 focus:ring-primary" 
+                               placeholder="{{ translations.get('search', {}).get('player_placeholder', 'Search players...') }}" 
+                               required minlength="2" maxlength="20">
+                        <button type="submit" class="bg-primary hover:bg-primary-variant text-white p-2 rounded-r">
+                            🔍
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="sidebar-section p-4">
+                <h4 class="font-bold text-lg mb-2 text-white">Quick Navigation</h4>
+                <ul class="quick-links space-y-2">
+                    <li>
+                        <a href="{{ url_for('game.dashboard') }}" class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/mapa.png" width="25">
+                            <span>{{ translations.navigation.cidade }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.view_character', character_id=current_user.character.id) if current_user.character else '#' }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/profile.png" width="25">
+                            <span>{{ translations.get('navigation', {}).get('profile', 'Profile') }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.mailbox') }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/mailbox.png" width="25">
+                            <span>{{ translations.get('navigation', {}).get('mailbox', 'Mailbox') }}</span>
+                            {% if unread_message_count > 0 %}
+                                <span class="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ml-auto">
+                                    {{ unread_message_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.academy') }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/academy.png" width="25">
+                            <span>{{ translations.navigation.academy }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.shop') }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/inventario.png" width="25">
+                            <span>{{ translations.shop.title }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.market') }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/market.png" width="25">
+                            <span>{{ translations.game.market.title if translations and translations.game.market and translations.game.market else 'Market' }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('game.fights') }}" 
+                           class="flex items-center gap-2 text-gray-200 hover:text-secondary p-2 rounded hover:bg-gray-700 transition-colors">
+                            <img src="../static/images/icons/arena.png" width="25">
+                            <span>{{ translations.game.fights.title if translations and translations.game.fights and translations.game.fights else 'Batalhas' }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section p-4">
+                <a href="{{ url_for('game.online_players') }}" 
+                   class="block bg-primary hover:bg-primary-variant text-white text-center py-2 px-4 rounded transition-colors">
+                    {{ translations.get('game', {}).get('online', {}).get('title', 'Online Players') }} ({{ online_count }})
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="bg-footer-bg backdrop-blur-sm py-3 text-center text-sm text-gray-300">
+        <p>{{ translations.get('general', {}).get('footer', '© 2023 Batalha na Selva') }}</p>
+    </footer>
+
+    <script>
+        // Toggle sidebar function
+        function toggleSidebar(side) {
+            const sidebar = document.getElementById(`${side}-sidebar`);
+            const mainContent = document.querySelector('.app-main');
+            
+            if (sidebar.classList.contains('translate-x-0') || sidebar.classList.contains('-translate-x-0')) {
+                // Close sidebar
+                if (side === 'left') {
+                    sidebar.classList.remove('-translate-x-0');
+                    sidebar.classList.add('-translate-x-full');
+                    mainContent.classList.remove('ml-64');
+                } else {
+                    sidebar.classList.remove('translate-x-0');
+                    sidebar.classList.add('translate-x-full');
+                    mainContent.classList.remove('mr-64');
+                }
+            } else {
+                // Open sidebar
+                if (side === 'left') {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('-translate-x-0');
+                    mainContent.classList.add('ml-64');
+                } else {
+                    sidebar.classList.remove('translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    mainContent.classList.add('mr-64');
+                }
+            }
+        }
+
+        // Auto-dismiss flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash');
+            flashMessages.forEach(message => {
+                // Add close button
+                const closeBtn = document.createElement('span');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.classList.add('absolute', 'top-1', 'right-2', 'cursor-pointer', 'text-lg');
+                closeBtn.addEventListener('click', () => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                });
+                message.appendChild(closeBtn);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000);
+            });
+            
+            // Make messages dismissable by clicking anywhere
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.flash')) {
+                    const message = e.target.closest('.flash');
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }
+            });
+        });
+    </script>
+{% endblock %}

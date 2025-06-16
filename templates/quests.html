@@ -1,0 +1,176 @@
+{# quests.html #}
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-2">
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">{{ translations.game.quests.page_title }}</h2>
+        <p class="mb-4">{{ translations.game.quests.description }}</p>
+
+        <div class="bg-gray-700/50 rounded-lg p-4 mb-6">
+            <h3 class="text-xl font-bold mb-2">{{ translations.game.quests.active_quest }}</h3>
+            {% if active_quest %}
+                <div class="mb-2">
+                    <h4 class="font-semibold">{{ active_quest.quest.title }}</h4>
+                    <p class="text-gray-300">{{ active_quest.quest.description }}</p>
+                </div>
+                <div class="mb-2">
+                    <p><strong>{{ translations.game.quests.objective }}:</strong></p>
+                    <ul class="list-disc pl-5">
+                        {% for objective in active_quest.quest.objectives %}
+                            <li>
+                                {{ get_objective_text(objective) }}
+                                {% set progress = active_quest.quest_progress|selectattr("objective_id", "equalto", objective.id)|first %}
+                                {% if progress %}
+                                    <span class="text-sm text-gray-400">({{ progress.progress_value }}/{{ objective.amount_required }})</span>
+                                    <div class="w-full bg-gray-700 h-2 rounded-full mt-1">
+                                        <div class="bg-blue-500 h-full rounded-full"
+                                             style="width: {{ (progress.progress_value / objective.amount_required * 100) | int }}%;"></div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-sm text-gray-400">(0/{{ objective.amount_required }})</span>
+                                    <div class="w-full bg-gray-700 h-2 rounded-full mt-1">
+                                        <div class="bg-blue-500 h-full rounded-full" style="width: 0%;"></div>
+                                    </div>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="mb-2">
+                    <p><strong>{{ translations.game.quests.rewards }}:</strong></p>
+                    <ul class="list-disc pl-5">
+                        {% for reward in active_quest.quest.rewards %}
+                            <li>{{ get_reward_text(reward) }}</li>
+                        {% endfor %}
+                        <li>{{ translations.game.quests.reputation_gain }}</li>
+                    </ul>
+                </div>
+                <form method="POST" action="{{ url_for('game.quests') }}" class="mt-4">
+                    <input type="hidden" name="action" value="abandon_quest">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                        {{ translations.game.quests.abandon_quest_button }}
+                    </button>
+                </form>
+            {% else %}
+                <p>{{ translations.game.quests.no_active_quest }}</p>
+            {% endif %}
+        </div>
+
+        <div class="bg-gray-700/50 rounded-lg p-4 mb-6">
+            <h3 class="text-xl font-bold mb-2">{{ translations.game.quests.available_quests }}</h3>
+            {% if can_accept_new_quest %}
+                {% if available_quests %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for quest in available_quests %}
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-lg mb-2">{{ quest.title }}</h4>
+                                <p class="text-gray-300 text-sm mb-3">{{ quest.description }}</p>
+                                <p><strong>{{ translations.game.quests.objective }}:</strong></p>
+                                <ul class="list-disc pl-5 mb-3 text-sm">
+                                    {% for objective in quest.objectives %}
+                                        <li>{{ get_objective_text(objective) }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <p><strong>{{ translations.game.quests.rewards }}:</strong></p>
+                                <ul class="list-disc pl-5 mb-3 text-sm">
+                                    {% for reward in quest.rewards %}
+                                        <li>{{ get_reward_text(reward) }}</li>
+                                    {% endfor %}
+                                    <li>{{ translations.game.quests.reputation_gain }}</li>
+                                </ul>
+                                {% set resource_info = get_faction_resource_info(current_user.character.faction) %}
+                                <p class="text-sm mt-2">
+                                    <strong>{{ translations.game.quests.cost }}:</strong> 1
+                                    <img src="{{ url_for('static', filename='images/icons/' + resource_info.image) }}"
+                                         alt="{{ resource_info.name }}" class="inline-block w-4 h-4 mr-1">
+                                    {{ resource_info.name }}
+                                </p>
+                                <form method="POST" action="{{ url_for('game.quests') }}" class="mt-4">
+                                    <input type="hidden" name="action" value="accept_quest">
+                                    <input type="hidden" name="quest_id" value="{{ quest.id }}">
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors w-full">
+                                        {{ translations.game.quests.accept_quest_button }}
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>{{ translations.game.quests.no_available_quests }}</p>
+                {% endif %}
+            {% else %}
+                <p class="text-yellow-400">
+                    {{ translations.game.quests.cannot_accept_yet }}
+                    {% if time_until_new_quest.total_seconds() > 0 %}
+                        ({{ translations.game.quests.time_until_new_quest }}:
+                        {% set hours = (time_until_new_quest.total_seconds() // 3600) | int %}
+                        {% set minutes = ((time_until_new_quest.total_seconds() % 3600) // 60) | int %}
+                        {{ hours }}h {{ minutes }}m)
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="bg-gray-800/50 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">{{ translations.game.quests.quest_log }}</h3>
+            {% if completed_quests %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-gray-700/50 rounded-lg">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 text-left">{{ translations.game.quests.table_header_quest }}</th>
+                                <th class="py-2 px-4 text-left">{{ translations.game.quests.table_header_status }}</th>
+                                <th class="py-2 px-4 text-left">{{ translations.game.quests.table_header_completed_at }}</th>
+                                <th class="py-2 px-4 text-left">{{ translations.game.quests.table_header_rewards }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in completed_quests %}
+                                <tr class="border-b border-gray-700">
+                                    <td class="py-2">
+                                        <div class="font-medium">{{ log.quest.title }}</div>
+                                        <div class="text-sm text-gray-400">{{ log.quest.description }}</div>
+                                    </td>
+                                    <td class="py-2">
+                                        {% if log.is_completed %}
+                                            <span class="text-green-400">{{ translations.game.quests.quest_completed_status }}</span>
+                                        {% elif log.is_failed %}
+                                            <span class="text-red-400">{{ translations.game.quests.quest_failed_status }}</span>
+                                        {% else %}
+                                            <span>In Progress</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-2">
+                                        {% if log.completed_at %}
+                                            {{ log.completed_at.strftime('%d/%m/%Y %H:%M') }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-2">
+                                        <ul class="list-disc pl-5">
+                                            {% for reward in log.quest.rewards %}
+                                                <li>{{ get_reward_text(reward) }}</li>
+                                            {% endfor %}
+                                            <li>
+                                                {% if log.is_completed %}
+                                                    {{ translations.game.quests.reputation_gain }}
+                                                {% else %}
+                                                    {{ translations.game.quests.reputation_loss }}
+                                                {% endif %}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>{{ translations.game.quests.no_completed_quests }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

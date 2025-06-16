@@ -1,0 +1,546 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-2 sm:p-4">
+    <!-- Inventory Tabs - Updated with better mobile handling -->
+    <div class="relative mb-4 sm:mb-6">
+        <div class="absolute inset-0 overflow-x-auto no-scrollbar">
+            <div class="flex space-x-1 pb-2 px-2 sm:px-0" style="min-width: max-content">
+                <button class="tab-button px-3 py-1.5 rounded whitespace-nowrap bg-blue-600 text-white text-sm active" data-tab="weapons">
+                    {{ translations.shop.weapons if translations and translations.shop and translations.shop.weapons else 'Weapons' }}
+                </button>
+                <button class="tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-tab="armor">
+                    {{ translations.shop.armor if translations and translations.shop and translations.shop.armor else 'Armor' }}
+                </button>
+                <button class="tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-tab="magic">
+                    {{ translations.shop.magic_items if translations and translations.shop and translations.shop.magic_items else 'Magic Items' }}
+                </button>
+            </div>
+        </div>
+        <div class="h-10"></div> <!-- Spacer for absolute positioned tabs -->
+    </div>
+
+    <!-- Weapons Tab -->
+    <div class="tab-content active" id="weapons">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for weapon, count in weapons %}
+                {% set weapon_data = translations.get('game', {}).get('items', {}).get('weapon', {}).get(weapon.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if weapon.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if weapon.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}"><div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + weapon.translation_key + '.PNG') }}" 
+                             alt="{{ weapon_data.get('name', weapon.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h3 class="font-semibold {% if weapon.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ weapon_data.get('name', weapon.translation_key.replace('_', ' ').title()) }}
+                            </h3>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ weapon_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.damage if translations and translations.shop and translations.shop.damage else 'Damage' }}: {{ weapon.stats.damage }}</span>
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.sell_price if translations and translations.shop and translations.shop.sell_price else 'Sell Price' }}: {{ weapon.price // 4 }}</span>
+                        
+                        {% if weapon.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ weapon.min_level }}</span>
+                        {% endif %}
+                        {% if weapon.required_attribute and weapon.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ weapon.required_attribute|title }}: {{ weapon.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if weapon.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=weapon.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    {{ translations.shop.unequip if translations and translations.shop and translations.shop.unequip else 'Unequip' }}
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=weapon.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    {{ translations.shop.equip if translations and translations.shop and translations.shop.equip else 'Equip' }}
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=weapon.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                {{ translations.shop.sell if translations and translations.shop and translations.shop.sell else 'Sell' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+           {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_weapons if translations and translations.shop and translations.shop.no_weapons else 'No weapons in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Armor Tab -->
+    <div class="tab-content" id="armor" style="display: none;">
+        <!-- Head Armor -->
+        <h3 class="text-lg font-semibold mb-3">{{ translations.shop.armor_head if translations and translations.shop and translations.shop.armor_head else 'Head Armor' }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {% for armor_item, count in armor_by_slot.head %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get('head', {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if armor_item.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if armor_item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.png') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h4 class="font-semibold {% if armor_item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}
+                            </h4>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Defense: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">HP Bonus: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Sell Price: {{ armor_item.price // 4 }}</span>
+                        
+                        {% if armor_item.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ armor_item.min_level }}</span>
+                        {% endif %}
+                        {% if armor_item.required_attribute and armor_item.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ armor_item.required_attribute|title }}: {{ armor_item.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if armor_item.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Unequip
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Equip
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_armor if translations and translations.shop and translations.shop.no_armor else 'No head armor in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Body Armor -->
+        <h3 class="text-lg font-semibold mb-3">{{ translations.shop.armor_body if translations and translations.shop and translations.shop.armor_body else 'Body Armor' }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {% for armor_item, count in armor_by_slot.body %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get('body', {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if armor_item.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if armor_item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.png') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h4 class="font-semibold {% if armor_item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}
+                            </h4>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Defense: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">HP Bonus: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Sell Price: {{ armor_item.price // 4 }}</span>
+                        
+                        {% if armor_item.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ armor_item.min_level }}</span>
+                        {% endif %}
+                        {% if armor_item.required_attribute and armor_item.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ armor_item.required_attribute|title }}: {{ armor_item.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if armor_item.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Unequip
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Equip
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_armor if translations and translations.shop and translations.shop.no_armor else 'No body armor in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Gloves -->
+        <h3 class="text-lg font-semibold mb-3">{{ translations.shop.armor_gloves if translations and translations.shop and translations.shop.armor_gloves else 'Gloves' }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {% for armor_item, count in armor_by_slot.gloves %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get('gloves', {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if armor_item.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if armor_item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.png') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h4 class="font-semibold {% if armor_item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}
+                            </h4>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Defense: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">HP Bonus: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Sell Price: {{ armor_item.price // 4 }}</span>
+                        
+                        {% if armor_item.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ armor_item.min_level }}</span>
+                        {% endif %}
+                        {% if armor_item.required_attribute and armor_item.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ armor_item.required_attribute|title }}: {{ armor_item.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if armor_item.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Unequip
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Equip
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_armor if translations and translations.shop and translations.shop.no_armor else 'No gloves in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pants -->
+        <h3 class="text-lg font-semibold mb-3">{{ translations.shop.armor_pants if translations and translations.shop and translations.shop.armor_pants else 'Pants' }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {% for armor_item, count in armor_by_slot.pants %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get('pants', {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if armor_item.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if armor_item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.png') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h4 class="font-semibold {% if armor_item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}
+                            </h4>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Defense: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">HP Bonus: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Sell Price: {{ armor_item.price // 4 }}</span>
+                        
+                        {% if armor_item.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ armor_item.min_level }}</span>
+                        {% endif %}
+                        {% if armor_item.required_attribute and armor_item.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ armor_item.required_attribute|title }}: {{ armor_item.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if armor_item.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Unequip
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Equip
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_armor if translations and translations.shop and translations.shop.no_armor else 'No pants in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Boots -->
+        <h3 class="text-lg font-semibold mb-3">{{ translations.shop.armor_boots if translations and translations.shop and translations.shop.armor_boots else 'Boots' }}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {% for armor_item, count in armor_by_slot.boots %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get('boots', {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border {% if armor_item.id in equipped_items %}border-yellow-400{% else %}border-gray-700{% endif %} {% if armor_item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.png') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h4 class="font-semibold {% if armor_item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}
+                            </h4>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Defense: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">HP Bonus: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">Sell Price: {{ armor_item.price // 4 }}</span>
+                        
+                        {% if armor_item.min_level > 1 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Level: {{ armor_item.min_level }}</span>
+                        {% endif %}
+                        {% if armor_item.required_attribute and armor_item.required_amount > 0 %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ armor_item.required_attribute|title }}: {{ armor_item.required_amount }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        {% if armor_item.id in equipped_items %}
+                            <form action="{{ url_for('game.unequip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Unequip
+                                </button>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('game.equip_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm">
+                                    Equip
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form action="{{ url_for('game.sell_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_armor if translations and translations.shop and translations.shop.no_armor else 'No boots in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Magic Items Tab -->
+   <div class="tab-content" id="magic" style="display: none;">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for item, count in magic_items %}
+                {% set item_data = translations.get('game', {}).get('items', {}).get('magic', {}).get(item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-4 border border-gray-700 {% if item.is_rare_drop %}border-pink-500 bg-pink-500/10{% endif %}">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="{{ url_for('static', filename='images/items/' + item.translation_key + '.PNG') }}" 
+                             alt="{{ item_data.get('name', item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-12 h-12 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                        <div>
+                            <h3 class="font-semibold {% if item.is_rare_drop %}text-pink-400{% endif %}">
+                                {{ item_data.get('name', item.translation_key.replace('_', ' ').title()) }}
+                            </h3>
+                            <span class="text-xs text-gray-400">x{{ count }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mb-3">{{ item_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.sell_price if translations and translations.shop and translations.shop.sell_price else 'Sell Price' }}: {{ item.price // 4 }}</span>
+                        
+                        {% if item.stats.gold %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Gold: {{ item.stats.gold }}</span>
+                        {% endif %}
+                        {% if item.stats.diamonds %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Diamonds: {{ item.stats.diamonds }}</span>
+                        {% endif %}
+                        {% if item.stats.health %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Health: {{ item.stats.health }}%</span>
+                        {% endif %}
+                        {% if item.stats.resource %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Resource: {{ item.stats.resource }}%</span>
+                        {% endif %}
+                        {% if item.stats.revives %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">Revives: Yes</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <form action="{{ url_for('game.use_item', item_id=item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 rounded text-sm">
+                                {{ translations.shop.use if translations and translations.shop and translations.shop.use else 'Use' }}
+                            </button>
+                        </form>
+                        <form action="{{ url_for('game.sell_item', item_id=item.id) }}" method="POST" class="flex-1">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                {{ translations.shop.sell if translations and translations.shop and translations.shop.sell else 'Sell' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400">
+                    {{ translations.shop.no_magic_items if translations and translations.shop and translations.shop.no_magic_items else 'No magic items in inventory' }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>
+
+<script>
+// Your existing JavaScript remains exactly the same
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        
+        // Update URL without reloading
+        history.pushState(null, null, `?tab=${tabId}`);
+        
+        // Update tab buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'active');
+            btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+        });
+        this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+        this.classList.add('bg-blue-600', 'active');
+        
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+        const activeContent = document.getElementById(tabId);
+        activeContent.classList.add('active');
+        activeContent.style.display = 'block';
+    });
+});
+
+// Initialize tab from URL
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentTab = urlParams.get('tab') || 'weapons';
+    
+    // Activate the correct tab
+    const button = document.querySelector(`.tab-button[data-tab="${currentTab}"]`);
+    if (button) button.click();
+});
+
+// Modify form submissions to preserve tab state
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const currentTab = document.querySelector('.tab-button.active').dataset.tab;
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'current_tab';
+        hiddenInput.value = currentTab;
+        this.appendChild(hiddenInput);
+        
+        // Also add source parameter if not present
+        if (!this.querySelector('input[name="source"]')) {
+            const sourceInput = document.createElement('input');
+            sourceInput.type = 'hidden';
+            sourceInput.name = 'source';
+            sourceInput.value = 'shop';
+            this.appendChild(sourceInput);
+        }
+    });
+});
+</script>
+{% endblock %}

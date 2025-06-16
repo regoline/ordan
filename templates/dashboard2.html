@@ -1,0 +1,255 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+<section class="dashboard-container">
+    <!-- Full width character summary -->
+    <div class="character-summary">
+        {% if current_user.character %}
+        <div style="display: flex; justify-content: left; align-items: center; gap: 5px;">
+            <h2>{{ current_user.character.name }}</h2>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                <img src="{{ url_for('static', filename='images/icons/' + ('vivo.png' if not current_user.character.is_dead else 'morto.png')) }}" 
+                    alt="Status" width="25">
+                {% if current_user.character.is_dead %}
+                    <form action="{{ url_for('game.heal') }}" method="POST" class="sidebar-heal-form">
+                        <input type="hidden" name="amount" value="{{ current_user.character.max_healthpoints }}">
+                        <button type="submit" class="btn btn-revive" 
+                                {% if current_user.character.gold < current_user.character.max_healthpoints %}disabled{% endif %}>
+                            Revive ({{ current_user.character.max_healthpoints }} gold)
+                        </button>
+                    </form>
+                {% elif current_user.character.healthpoints < current_user.character.max_healthpoints %}
+                    <form action="{{ url_for('game.heal') }}" method="POST" class="sidebar-heal-form">
+                        <input type="hidden" name="amount" value="10">
+                        <button type="submit" class="btn btn-heal">
+                            Heal 10 HP (10 gold)
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if faction_data %}
+        <p class="faction-badge dashboard-badge" style="color: {{ faction_data.color }}; border-color: {{ faction_data.color }};">
+            {{ faction_data.name }}
+        </p>
+        {% endif %}
+        
+        <p><strong>{{ translations.get('dashboard', {}).get('level', 'Level') }}:</strong> {{ current_user.character.level if current_user.character.level else '1' }}</p>
+        
+        <div class="xp-display">
+            <p>
+                <strong>{{ translations.get('dashboard', {}).get('xp', 'XP') }}:</strong>
+                {{ current_user.character.current_xp }} / {{ current_user.character.xp_to_next_level }}
+            </p>
+            <div class="xp-bar">
+                <div class="xp-progress" 
+                     style="width: {{ (current_user.character.current_xp / current_user.character.xp_to_next_level) * 100 }}%">
+                </div>
+            </div>
+        </div>
+        
+        {% if faction_data and faction_data.description %}
+        <p class="faction-description">{{ faction_data.description }}</p>
+        {% endif %}
+        
+        {% else %}
+        <h3>{{ translations.get('dashboard', {}).get('no_character', 'No character created') }}</h3>
+        {% endif %}
+    </div>
+    
+    
+
+    <!-- Two-column section starts here -->
+   <div class="character-summary">
+    <div class="dashboard-columns">
+        <!-- Left column (2/3 of space) -->
+        <div class="dashboard-main">
+            <!-- Future content goes here -->
+            <div class="skills-header">
+							<img src="../static/images/icons/mapa.png" width="50">
+                        <h2>A cidade</h2>
+                        </div>
+           
+            <p class="faction-description">
+				É na cidade que você encontra direções para chegar a vários pontos de interesse. Perguntando na Taverna, você consegue informações de como chegar nesses lugares:
+			</p>
+			
+			<div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/academia.png" width="50">
+                <h2><a href="{{ url_for('game.academy') }}" class="sidebar-link">A Torre das Essências (Academia)</a></h2> </div>
+                <p>No alto de um antigo penhasco, esta torre vibra com energia elemental. Aqui, aqueles que buscam crescimento alinham suas almas com as Quatro Grandes Essências por meio de estudo rigoroso e ritos sagrados.</p>
+            </div>
+            
+            <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/treinamento.png" width="50">
+                <h2><a href="{{ url_for('game.battlefield') }}" class="sidebar-link">A Marcha Corrompida (PvM)</a></h2> </div>
+                <p>Antes fértil, esta terra amaldiçoada agora geme sob o peso da corrupção infernal. Criaturas demoníacas vagam livremente, atraídas pelo ódio e sangue derramado de guerras esquecidas.</p>
+            </div>
+            <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/arena.png" width="50">
+                 <h2><a href="{{ url_for('game.arena') }}" class="sidebar-link">Arena (PvP)</h2></a> </div>
+                <p>Cada grito, cada golpe—ressoa eternamente nesta arena encantada. Aqui, guerreiros testam suas essências uns contra os outros, buscando glória ou redenção diante dos espíritos silenciosos do passado.</p>
+            </div>
+            <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/inventario.png" width="50">
+                <h2><a href="{{ url_for('game.shop') }}" class="sidebar-link">
+					{{ translations.shop.title }}
+				</a></h2> </div>
+                <p>Uma lareira acolhedora, camas macias e baús encantados para guardar seus fardos. Seja para um breve descanso ou uma reflexão profunda, esta estalagem acolhe todos os que trilham o caminho das Essências.</p>
+            </div>
+            <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/arma.png" width="50">
+                <h2><a href="{{ url_for('game.weapon_shop') }}" class="sidebar-link">
+							{{ translations.shop.weapons if translations and translations.shop and translations.shop.weapons else 'Weapon Shop' }}
+						</a></h2> </div>
+                <p>Procurando uma Armadura? Lugar errado.. Ah! Uma arma dura? Podemos ver se tem.</p>
+            </div>
+             <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/armadura.png" width="50">
+                <h2><a href="{{ url_for('game.armor_shop') }}" class="sidebar-link">
+							{{ translations.shop.armor if translations and translations.shop and translations.shop.armor else 'Armor Shop' }}
+						</a></h2> </div>
+                <p>Procurando uma Arma Dura? Lugar errado.. Ahh! Uma armadura! Sim, temos.</p>
+            </div>
+            <div class="character-summary">
+				<div class="skills-header">
+							<img src="../static/images/icons/mercado.png" width="50">
+                <h2><a href="{{ url_for('game.magic_shop') }}" class="sidebar-link">Mercado Mágico</h2></a> </div>
+                <p>Não é arma nem armadura? Então aqui tem.</p>
+            </div>
+            <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/banco.png" width="50">
+                <h2><a href="{{ url_for('game.bank') }}" class="sidebar-link">
+					{{ translations.get('game', {}).get('bank', {}).get('title', 'Bank') }}
+				</a></h2> </div>
+                <p>Não é bom sair por ai com tanto dinheiro no bolso.</p>
+            </div>
+            <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/mailbox.png" width="50">
+                 <h2>Caixa de Correios</h2> </div>
+                <p>Atenção! Tem carta para você!</p>
+            </div>
+            
+            <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/mina.png" width="50">
+                <h2><a href="{{ url_for('game.mine') }}" class="sidebar-link">
+					{{ translations.get('game', {}).get('mine', {}).get('title', 'Mina') }}
+				</a></h2> </div>
+                <p>Você ouve falar de uma grande mina de diamantes por perto. Ninguém nunca achou um, o que a torna ainda mais promissora!</p>
+            </div>
+            <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/lottery.png" width="50">
+                <h2><a href="{{ url_for('game.lottery') }}" class="sidebar-link">
+					{{ translations.get('game', {}).get('lottery', {}).get('title', 'Loteria') }}
+				</a></h2> </div>
+                <p>Loteria!!!</p>
+            </div>
+            <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/ranking2.png" width="50">
+                <h2><a href="{{ url_for('game.rankings') }}" class="sidebar-link">Hall dos Campeões</h2></a> </div>
+                <p>Só para os melhores, ou piores..</p>
+            </div>
+             <div class="character-summary">
+                <div class="skills-header">
+							<img src="../static/images/icons/academy2.png" width="50">
+                 <h2>Biblioteca</h2> </div>
+                <p>Toda a história de Ordan em um só lugar</p>
+            </div>
+            
+        </div>
+        
+        <!-- Right column (1/3 of space) - Skills -->
+        <div class="skills-column">
+            <div class="skills-header">
+                <img src="../static/images/icons/skills.png" width="50">
+                <h2>{{ translations.game.character_stats.skills_title or 'Skills' }}</h2>
+            </div>
+            
+            <!-- Destreza Skill -->
+            <div class="skill-container {% if current_user.character.faction == 'Veylan' %}faction-bonus-skill{% endif %}">
+                <div class="skill-header">
+                    <img src="{{ url_for('static', filename='images/skill_dex.png') }}" 
+                         alt="{{ translations.game.attributes.skill_name_destreza }}"
+                         class="skill-icon">
+                    <span class="skill-name">{{ translations.game.attributes.skill_name_destreza }}</span>
+                    {% if current_user.character.faction == 'Veylan' %}
+                    <span class="bonus-badge">{{ translations.character_creation.faction_bonus }}</span>
+                    {% endif %}
+                </div>
+                <p class="skill-description">{{ translations.game.attributes.skill_destreza_description }}</p>
+            </div>
+            
+            <!-- Força Skill -->
+            <div class="skill-container {% if current_user.character.faction == 'Urghan' %}faction-bonus-skill{% endif %}">
+                <div class="skill-header">
+                    <img src="{{ url_for('static', filename='images/skill_forca.png') }}" 
+                         alt="{{ translations.game.attributes.skill_name_forca }}"
+                         class="skill-icon">
+                    <span class="skill-name">{{ translations.game.attributes.skill_name_forca }}</span>
+                    {% if current_user.character.faction == 'Urghan' %}
+                    <span class="bonus-badge">{{ translations.character_creation.faction_bonus }}</span>
+                    {% endif %}
+                </div>
+                <p class="skill-description">{{ translations.game.attributes.skill_forca_description }}</p>
+            </div>
+            
+            <!-- Inteligência Skill -->
+            <div class="skill-container {% if current_user.character.faction == 'Aureen' %}faction-bonus-skill{% endif %}">
+                <div class="skill-header">
+                    <img src="{{ url_for('static', filename='images/skill_int.png') }}" 
+                         alt="{{ translations.game.attributes.skill_name_inteligencia }}"
+                         class="skill-icon">
+                    <span class="skill-name">{{ translations.game.attributes.skill_name_inteligencia }}</span>
+                    {% if current_user.character.faction == 'Aureen' %}
+                    <span class="bonus-badge">{{ translations.character_creation.faction_bonus }}</span>
+                    {% endif %}
+                </div>
+                <p class="skill-description">{{ translations.game.attributes.skill_inteligencia_description }}</p>
+            </div>
+            
+            <!-- Devoção Skill -->
+            <div class="skill-container {% if current_user.character.faction == 'Camyra' %}faction-bonus-skill{% endif %}">
+                <div class="skill-header">
+                    <img src="{{ url_for('static', filename='images/skill_devocao.png') }}" 
+                         alt="{{ translations.game.attributes.skill_name_devocao }}"
+                         class="skill-icon">
+                    <span class="skill-name">{{ translations.game.attributes.skill_name_devocao }}</span>
+                    {% if current_user.character.faction == 'Camyra' %}
+                    <span class="bonus-badge">{{ translations.character_creation.faction_bonus }}</span>
+                    {% endif %}
+                </div>
+                <p class="skill-description">{{ translations.game.attributes.skill_devocao_description }}</p>
+            </div>
+            
+            <div class="skill-container faction-bonus-skill">
+            <h3>Bônus de facção</h3>
+            Todas as facções tem acesso a todas as skills. O que acontece é que o Bônus te dá ainda mais chances de que a skill seja ativada.
+            </div>
+        </div>
+    </div> </div>
+    <!-- Full width activity section -->
+    <div class="activity-section">
+        <h2>{{ translations.get('dashboard', {}).get('activity_title', 'Recent Activity') }}</h2>
+        <ul class="activity-log">
+            {% for event in recent_activity %}
+                <li>{{ event.description }}</li>
+            {% else %}
+                <li>{{ translations.get('dashboard', {}).get('no_activity', 'No recent activity') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+</section>
+{% endblock %}

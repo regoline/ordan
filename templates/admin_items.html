@@ -1,0 +1,88 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>{{ translations.admin.items if translations and translations.admin and translations.admin.items else 'Items' }}</h2>
+    
+    <div class="dashboard-columns">
+        <div class="dashboard-main">
+            <a href="{{ url_for('game.add_item') }}" class="btn btn-message">
+                {{ translations.admin.add_item if translations and translations.admin and translations.admin.add_item else 'Add Item' }}
+            </a>
+            
+            <div class="results-grid">
+                {% for item in items %}
+                <p>Item ID: {{ item.id }}</p>
+                <p>Translation key: {{ item.translation_key }}</p>
+                <p>Total items in translations: 
+                    {% set weapon_items = translations.game.items.weapon if translations and translations.game and translations.game.items and translations.game.items.weapon else {} %}
+                    {% set armor_items = translations.game.items.armor if translations and translations.game and translations.game.items and translations.game.items.armor else {
+                        'head': {},
+                        'body': {},
+                        'gloves': {},
+                        'pants': {},
+                        'boots': {}
+                    } %}
+                    Weapons: {{ weapon_items|length }}, 
+                    Armor: {{ 
+                        (armor_items.head|length if armor_items.head else 0) + 
+                        (armor_items.body|length if armor_items.body else 0) + 
+                        (armor_items.gloves|length if armor_items.gloves else 0) + 
+                        (armor_items.pants|length if armor_items.pants else 0) + 
+                        (armor_items.boots|length if armor_items.boots else 0) 
+                    }}
+                </p>
+                <div class="player-card">
+                    <div class="player-info">
+                        <div class="player-details">
+                            {% set item_name = item.translation_key %}
+                            {% set item_desc = 'No description available' %}
+                            
+                            {% if translations and translations.game and translations.game.items %}
+                                {% if translations.game.items.weapon and item.translation_key in translations.game.items.weapon %}
+                                    {% set item_name = translations.game.items.weapon[item.translation_key].name %}
+                                    {% set item_desc = translations.game.items.weapon[item.translation_key].description %}
+                                {% else %}
+                                    {% for slot in ['head', 'body', 'gloves', 'pants', 'boots'] %}
+                                        {% if translations.game.items.armor and translations.game.items.armor[slot] and item.translation_key in translations.game.items.armor[slot] %}
+                                            {% set item_name = translations.game.items.armor[slot][item.translation_key].name %}
+                                            {% set item_desc = translations.game.items.armor[slot][item.translation_key].description %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <h3>{{ item_name }}</h3>
+                            <p>{{ item_desc }}</p>
+                            <div class="player-meta">
+                                <span class="player-level">Tipo: {{ item.item_type }}</span>
+                                <span class="player-level">Preço: {{ item.price }}</span>
+                                <span class="player-level">Nível mínimo: {{ item.min_level }}</span>
+                                {% if item.item_type == 'weapon' %}
+                                    <span class="player-level">Dano: {{ item.stats.damage }}</span>
+                                {% else %}
+                                    <span class="player-level">Defesa: {{ item.stats.defense }}</span>
+                                    {% if item.stats.health_bonus %}
+                                        <span class="player-level">Bônus HP: {{ item.stats.health_bonus }}</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <a href="{{ url_for('game.edit_item', item_id=item.id) }}" class="btn btn-view">
+                            {{ translations.admin.edit_item if translations and translations.admin and translations.admin.edit_item else 'Edit' }}
+                        </a>
+                        <form action="{{ url_for('game.delete_item', item_id=item.id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja remover este item?');">
+                            <button type="submit" class="btn btn-fight">
+                                {{ translations.admin.delete_item if translations and translations.admin and translations.admin.delete_item else 'Delete' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

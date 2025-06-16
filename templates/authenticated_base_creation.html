@@ -1,0 +1,62 @@
+{% extends "base_auth_creation.html" %}
+{% block body %}
+
+<header class="fixed top-0 left-0 right-0 bg-header-bg backdrop-blur-sm shadow-md z-50 h-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex justify-between items-center w-full sm:w-auto">
+        <img src="../static/images/logo.png" alt="Logo" class="h-12">
+        <button id="menu-toggle" class="sm:hidden text-white focus:outline-none">
+            ☰
+        </button>
+    </div>
+
+    <nav id="mobile-menu" class="hidden sm:flex flex-col sm:flex-row sm:items-center gap-4 mt-4 sm:mt-0 sm:ml-auto">
+        <a href="{{ url_for('game.dashboard') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+            {{ translations.get('navigation', {}).get('dashboard', 'Dashboard') }}
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+            {{ translations.get('navigation', {}).get('logout', 'Log Out') }}
+        </a>
+		
+		<div class="relative mt-2">
+		  <select onchange="location = this.value;" class="bg-input-bg text-gray-200 text-sm border border-input-border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-input-focus">
+			{% for code, name in config.AVAILABLE_LANGUAGES.items() %}
+			  <option value="{{ url_for('auth.set_language', language=code) }}"
+				{% if session.get('language', config.DEFAULT_LANGUAGE) == code %}selected{% endif %}>
+				{{ name }}
+			  </option>
+			{% endfor %}
+		  </select>
+		</div> </nav>
+   
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			<div class="flash-messages">
+				{% for category, message in messages %}
+					<div class="flash {{ category }}">{{ message }}</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+	{% endwith %}
+
+ 
+        
+
+        <main class="flex-1 flex flex-col pt-[125px] px-8">
+            {% block content %}{% endblock %}
+        </main>
+   
+
+   <footer class="bg-footer-bg backdrop-blur-sm py-4 text-center">
+        <p class="m-0 text-gray-200 text-sm">{{ translations.get('general', {}).get('footer', '© 2025 Ordan') }}</p>
+    </footer>
+
+    <script>  
+	  document.getElementById('menu-toggle').addEventListener('click', function () {
+		  const menu = document.getElementById('mobile-menu');
+		  menu.classList.toggle('hidden');
+	  });
+</script>
+    
+{% endblock %}
