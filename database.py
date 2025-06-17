@@ -389,7 +389,7 @@ class NPC(db.Model):
     max_xp = db.Column(db.Integer, default=20)
     min_gold = db.Column(db.Integer, default=5)
     max_gold = db.Column(db.Integer, default=10)
-    image = db.Column(db.String(100), default='npc.png')
+    image = db.Column(db.String(100), default='npc.webp')
     reputation = db.Column(db.Integer, default=0)
     inteligencia = db.Column(db.Float, default=10)
     destreza = db.Column(db.Float, default=10)

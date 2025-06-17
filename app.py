@@ -205,6 +205,8 @@ def create_app():
         lang = session.get('language', app.config['DEFAULT_LANGUAGE'])
         g.translations = load_translation_file(lang)
         
+    init_scheduler(app)
+        
     return app
 
 if __name__ == '__main__':

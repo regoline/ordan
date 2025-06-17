@@ -28,7 +28,7 @@ def get_cached_rankings():
             'reputation': c.reputation if hasattr(c, 'reputation') else 0,
             'faction': c.faction,
             'faction_color': get_faction_color(c.faction),
-            'faction_image': f"{c.faction.lower()}.png",
+            'faction_image': f"{c.faction.lower()}.webp",
             'gold': c.gold,
             'bank_gold': c.bank_gold,
             'mining_level': c.mining_level,
@@ -51,7 +51,7 @@ def get_cached_rankings():
             'deaths': stats['deaths'],
             'count': stats['count'],
             'color': get_faction_color(faction),
-            'image': f"{faction.lower()}.png"
+            'image': f"{faction.lower()}.webp"
         } for faction, stats in faction_stats.items()]
         
         return {

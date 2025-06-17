@@ -51,7 +51,7 @@ def get_faction_resource_name(faction_key):
 
 def get_faction_resource_image(faction_key):
     faction_stats = load_faction_stats()
-    return faction_stats.get(faction_key, {}).get('stats', {}).get('resource_image', 'resource.png')
+    return faction_stats.get(faction_key, {}).get('stats', {}).get('resource_image', 'resource.webp')
 
 # Add this new function to game.py
 def get_faction_resource_info(faction_key):
@@ -442,7 +442,7 @@ def utility_processor():
         faction_data = faction_stats.get(faction_key, {})
         return {
             'name': faction_data.get('stats', {}).get('resource_name', 'Resource'),
-            'image': faction_data.get('stats', {}).get('resource_image', 'resource.png')
+            'image': faction_data.get('stats', {}).get('resource_image', 'resource.webp')
         }
             
     return dict(get_objective_text=get_objective_text, get_reward_text=get_reward_text, get_faction_resource_info=get_faction_resource_info)
@@ -1092,7 +1092,7 @@ def rankings():
     for char in (top_forca + top_destreza + top_inteligencia + top_devocao + 
                 top_combined + top_reputation + worst_reputation):
         if not hasattr(char, 'faction_image'):
-            char.faction_image = f"{char.faction.lower()}.png"
+            char.faction_image = f"{char.faction.lower()}.webp"
     
     return render_template('rankings.html',
         translations=translations,
@@ -3639,7 +3639,7 @@ def add_npc():
             max_xp = int(request.form['max_xp'])
             min_gold = int(request.form['min_gold'])
             max_gold = int(request.form['max_gold'])
-            image = request.form['image'] or 'npc.png'
+            image = request.form['image'] or 'npc.webp'
             reputation = int(request.form['reputation'])
             inteligencia = float(request.form['inteligencia'])
             destreza = float(request.form['destreza'])
@@ -3706,7 +3706,7 @@ def edit_npc(npc_id):
             npc.max_xp = int(request.form['max_xp'])
             npc.min_gold = int(request.form['min_gold'])
             npc.max_gold = int(request.form['max_gold'])
-            npc.image = request.form['image'] or 'npc.png'
+            npc.image = request.form['image'] or 'npc.webp'
             npc.reputation = int(request.form['reputation'])
             npc.inteligencia = float(request.form['inteligencia'])
             npc.destreza = float(request.form['destreza'])
