@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', config.DEFAULT_LANGUAGE) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ (translations or {}).get('general', {}).get('title', 'Ordan') }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4a4a4a',
+                        'primary-variant': '#2e2e2e',
+                        secondary: '#6b6b6b',
+                        error: '#d32f2f',
+                        surface: 'rgba(30, 30, 30, 0.9)',
+                        'on-surface': '#ffffff',
+                        'input-bg': '#2d2d2d',
+                        'input-border': '#444',
+                        'input-focus': '#5e5e5e',
+                        'header-bg': 'rgba(20, 20, 20, 0.9)',
+                        'footer-bg': 'rgba(20, 20, 20, 0.9)',
+                        factionVeylan: '#6c3e8d',
+                        factionUrghan: '#87563e',
+                        factionAureen: '#0a3e8d',
+                        factionCamyra: '#25743e',
+                    },
+                    fontFamily: {
+                        main: ['Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+    body.unauthenticated {
+        background: 
+            url('../static/images/background.webp') no-repeat right,
+            url('../static/images/background2.webp') no-repeat left;
+        background-size: contain;
+        background-color: #000000;
+        background-attachment: fixed;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    body.unauthenticated::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+    }
+
+    @media (prefers-color-scheme: light) {
+        body.unauthenticated::before {
+            background: rgba(255, 255, 255, 0.7);
+        }
+    }
+
+    /* Faction colors */
+    .faction-veylan { color: #6c3e8d; }
+    .faction-urghan { color: #87563e; }
+    .faction-aureen { color: #0a3e8d; }
+    .faction-camyra { color: #25743e; }
+</style>
+        
+   
+</head>
+<body class="font-main bg-gray-900 text-gray-200 unauthenticated {% if current_user.is_authenticated %}authenticated{% endif %}">
+    {% block body %}{% endblock %}
+</body>
+</html>

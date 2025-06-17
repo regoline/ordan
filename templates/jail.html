@@ -1,0 +1,163 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-2 sm:p-4 max-w-4xl mx-auto">
+    {% if is_jailed %}
+        <!-- Jail Status Card -->
+        <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+            <div class="flex items-center gap-3 mb-3 sm:mb-4">
+                <img src="{{ url_for('static', filename='images/icons/jail.png') }}" width="40" class="w-8 sm:w-10">
+                <h2 class="text-lg sm:text-xl font-bold">You are in Jail</h2>
+            </div>
+            
+            <div class="bg-gray-700/50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                <h3 class="text-md sm:text-lg font-semibold mb-2 sm:mb-3 border-b border-gray-600 pb-1 sm:pb-2">Jail Details</h3>
+                <div class="space-y-1 sm:space-y-2 text-sm sm:text-base">
+                    <p><strong class="text-gray-300">Reason:</strong> <span class="break-words">{{ jail_record.real_reason }}</span></p>
+                    <p><strong class="text-gray-300">Duration:</strong> {{ jail_record.duration }} {{ jail_record.duration_unit }}</p>
+                    <p><strong class="text-gray-300">Time Remaining:</strong> 
+                        {% set remaining = jail_record.start_time + timedelta(minutes=jail_record.duration) - datetime.utcnow() %}
+                        {% if remaining.days > 0 %}
+                            {{ remaining.days }}d {{ remaining.seconds//3600 }}h
+                        {% elif remaining.seconds >= 3600 %}
+                            {{ remaining.seconds//3600 }}h {{ (remaining.seconds%3600)//60 }}m
+                        {% else %}
+                            {{ (remaining.seconds%3600)//60 }}m
+                        {% endif %}
+                    </p>
+                    <p><strong class="text-gray-300">Jailed by:</strong> {{ jail_record.admin.name }}</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 sm:gap-3">
+                <a href="{{ url_for('game.send_message') }}?recipient_id=1" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors text-sm sm:text-base">
+                    Message Admin
+                </a>
+                
+                                
+                {% if current_user.is_admin %}
+                <form method="POST" action="{{ url_for('game.release_from_jail', character_id=current_user.character.id) }}">
+                    <button type="submit" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg transition-colors text-sm sm:text-base">
+                        Release Yourself
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Jailed Players Section -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6">
+        <div class="flex items-center gap-3 mb-3 sm:mb-4">
+            <img src="{{ url_for('static', filename='images/icons/jail.webp') }}" width="40" class="w-8 sm:w-10">
+            <h3 class="text-lg sm:text-xl font-bold">Currently Jailed Players</h3>
+        </div>
+        
+        {% if jailed_characters %}
+            <div class="overflow-x-auto -mx-2 sm:mx-0">
+                <!-- Desktop Table (hidden on mobile) -->
+                <table class="w-full text-left hidden sm:table">
+                    <thead class="bg-gray-700 text-gray-300">
+                        <tr>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">Player</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">Reason</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base whitespace-nowrap">Time Left</th>
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base whitespace-nowrap">Jailed By</th>
+                            {% if current_user.is_admin %}
+                            <th class="px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in jailed_characters %}
+                        <tr class="border-b border-gray-700 hover:bg-gray-700/50 transition-colors">
+                            <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base whitespace-nowrap">
+                                <a href="{{ url_for('game.view_character', character_id=player.id) }}" 
+                                   class="text-blue-400 hover:text-blue-300">
+                                    {{ player.name }}
+                                    {% if player.id == current_user.character.id %}<span class="text-gray-400">(You)</span>{% endif %}
+                                </a>
+                            </td>
+                            <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base break-words max-w-[150px] sm:max-w-none">
+                                {{ player.current_jail.game_reason }}
+                            </td>
+                            <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base whitespace-nowrap">
+                                {% set remaining = player.current_jail.start_time + timedelta(minutes=player.current_jail.duration) - datetime.utcnow() %}
+                                {% if remaining.days > 0 %}
+                                    {{ remaining.days }}d {{ remaining.seconds//3600 }}h
+                                {% elif remaining.seconds >= 3600 %}
+                                    {{ remaining.seconds//3600 }}h {{ (remaining.seconds%3600)//60 }}m
+                                {% else %}
+                                    {{ (remaining.seconds%3600)//60 }}m
+                                {% endif %}
+                            </td>
+                            <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base whitespace-nowrap">
+                                {{ player.current_jail.admin.name }}
+                            </td>
+                            {% if current_user.is_admin %}
+                            <td class="px-2 py-1 sm:px-4 sm:py-3 text-sm sm:text-base whitespace-nowrap">
+                                <form method="POST" action="{{ url_for('game.release_from_jail', character_id=player.id) }}">
+                                    <button type="submit" 
+                                            class="bg-green-600 hover:bg-green-700 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg text-xs sm:text-sm transition-colors">
+                                        Release
+                                    </button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <!-- Mobile Cards (shown on mobile) -->
+                <div class="sm:hidden space-y-3">
+                    {% for player in jailed_characters %}
+                    <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                        <div class="flex justify-between items-start mb-2">
+                            <a href="{{ url_for('game.view_character', character_id=player.id) }}" 
+                               class="text-blue-400 hover:text-blue-300 font-medium">
+                                {{ player.name }}
+                                {% if player.id == current_user.character.id %}<span class="text-gray-400">(You)</span>{% endif %}
+                            </a>
+                            <span class="text-sm text-gray-300">
+                                {% set remaining = player.current_jail.start_time + timedelta(minutes=player.current_jail.duration) - datetime.utcnow() %}
+                                {% if remaining.days > 0 %}
+                                    {{ remaining.days }}d {{ remaining.seconds//3600 }}h
+                                {% elif remaining.seconds >= 3600 %}
+                                    {{ remaining.seconds//3600 }}h {{ (remaining.seconds%3600)//60 }}m
+                                {% else %}
+                                    {{ (remaining.seconds%3600)//60 }}m
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="text-sm space-y-1">
+                            <p><span class="text-gray-300 font-medium">Reason:</span> {{ player.current_jail.game_reason }}</p>
+                            <p><span class="text-gray-300 font-medium">Jailed by:</span> {{ player.current_jail.admin.name }}</p>
+                        </div>
+                        
+                        {% if current_user.is_admin %}
+                        <div class="mt-3">
+                            <form method="POST" action="{{ url_for('game.release_from_jail', character_id=player.id) }}">
+                                <button type="submit" 
+                                        class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs transition-colors">
+                                    Release
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-3 sm:py-4 text-gray-400 text-sm sm:text-base">
+                No players are currently jailed.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

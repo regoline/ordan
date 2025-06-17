@@ -1,0 +1,49 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-4 sm:p-6 max-w-2xl mx-auto bg-gray-800/50 rounded-lg">
+    <div class="flex items-center gap-3 mb-4 sm:mb-6">
+        <img src="{{ url_for('static', filename='images/icons/jail.webp') }}" width="40" class="w-8 sm:w-10">
+        <h2 class="text-xl sm:text-2xl font-bold">Jail Player: {{ character.name }}</h2>
+    </div>
+    
+    <form method="POST" class="space-y-4 sm:space-y-6">
+        <div class="space-y-2">
+            <label for="duration" class="block text-sm sm:text-base font-medium text-gray-300">Duration:</label>
+            <div class="flex gap-2">
+                <input type="number" id="duration" name="duration" min="1" required
+                       class="bg-gray-700 border border-gray-600 text-white text-sm sm:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2 sm:p-2.5">
+                <select name="duration_unit" required
+                        class="bg-gray-700 border border-gray-600 text-white text-sm sm:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2 sm:p-2.5">
+                    <option value="minutes">Minutes</option>
+                    <option value="hours">Hours</option>
+                    <option value="days">Days</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="space-y-2">
+            <label for="real_reason" class="block text-sm sm:text-base font-medium text-gray-300">Real Reason (Admin Only):</label>
+            <textarea id="real_reason" name="real_reason" required minlength="10"
+                      class="bg-gray-700 border border-gray-600 text-white text-sm sm:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-2.5 h-24"></textarea>
+        </div>
+        
+        <div class="space-y-2">
+            <label for="game_reason" class="block text-sm sm:text-base font-medium text-gray-300">Game Reason (Public):</label>
+            <textarea id="game_reason" name="game_reason" required minlength="10"
+                      class="bg-gray-700 border border-gray-600 text-white text-sm sm:text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-2.5 h-24"></textarea>
+        </div>
+        
+        <div class="flex flex-wrap gap-3">
+            <button type="submit" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm sm:text-base font-medium">
+                Send to Jail
+            </button>
+            <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg transition-colors text-sm sm:text-base font-medium">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

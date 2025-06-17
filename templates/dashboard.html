@@ -1,0 +1,322 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+
+<section class="w-full p-2">
+    <!-- Full width character summary -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        {% if current_user.character %}
+        <div class="flex items-center gap-3 mb-4">
+            <h2 class="text-2xl font-bold">{{ current_user.character.name }}</h2>
+            <div class="flex items-center gap-2">
+                <img src="{{ url_for('static', filename='images/icons/' + ('vivo.webp' if not current_user.character.is_dead else 'morto.webp')) }}" 
+                    alt="Status" width="25">
+                {% if current_user.character.is_dead %}
+                    <form action="{{ url_for('game.heal') }}" method="POST" class="ml-2">
+                        <input type="hidden" name="amount" value="{{ current_user.character.max_healthpoints }}">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm disabled:opacity-50"
+                                {% if current_user.character.gold < current_user.character.max_healthpoints %}disabled{% endif %}>
+                            Revive ({{ current_user.character.max_healthpoints }} gold)
+                        </button>
+                    </form>
+                {% elif current_user.character.healthpoints < current_user.character.max_healthpoints %}
+                    <form action="{{ url_for('game.heal') }}" method="POST" class="ml-2">
+                        <input type="hidden" name="amount" value="10">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm">
+                            Heal 10 HP (10 gold)
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+            
+        </div>
+        
+        {% if faction_data %}
+        <div class="inline-block px-3 py-1 mb-4 rounded-full border-2 font-bold" 
+             style="color: {{ faction_data.color }}; border-color: {{ faction_data.color }};">
+            {{ faction_data.name }}
+        </div>
+        {% endif %}
+        
+        <p class="mb-2"><strong>{{ translations.get('dashboard', {}).get('level', 'Level') }}:</strong> {{ current_user.character.level if current_user.character.level else '1' }}</p>
+        
+        <div class="xp-display mb-4">
+            <p class="mb-1">
+                <strong>{{ translations.get('dashboard', {}).get('xp', 'XP') }}:</strong>
+                {{ current_user.character.current_xp }} / {{ current_user.character.xp_to_next_level }}
+            </p>
+            <div class="w-full bg-gray-700 h-2 rounded-full">
+                <div class="bg-green-500 h-full rounded-full" 
+                     style="width: {{ (current_user.character.current_xp / current_user.character.xp_to_next_level) * 100 }}%">
+                </div>
+            </div>
+        </div>
+        
+        {% if faction_data and faction_data.description %}
+        <p class="text-gray-300">{{ faction_data.description }}</p>
+        {% endif %}
+        
+        {% else %}
+        <h3 class="text-xl">{{ translations.get('dashboard', {}).get('no_character', 'No character created') }}</h3>
+        {% endif %}
+        
+			   <!-- Countdown timers -->
+		<div class="bg-gray-800/50 rounded-lg p-4 mb-6">
+			<h3 class="text-xl font-bold mb-4">{{ translations.get('dashboard', {}).get('countdowns', 'Game Timers') }}</h3>
+			
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<!-- Game refresh countdown -->
+				<div class="bg-gray-700/50 p-3 rounded-lg">
+					<div class="flex items-center gap-2 mb-1">
+						<img src="{{ url_for('static', filename='images/icons/refresh.webp') }}" alt="Refresh" width="20">
+						<span class="font-medium">{{ translations.get('dashboard', {}).get('next_refresh', 'Next Game Refresh') }}</span>
+					</div>
+					<div id="refresh-countdown" class="text-2xl font-mono">--:--:--</div>
+					<p class="text-sm text-gray-400 mt-1">{{ translations.get('dashboard', {}).get('refresh_description', 'Resources reset and all players revived') }}</p>
+				</div>
+				
+				<!-- Revive countdown -->
+				<div class="bg-gray-700/50 p-3 rounded-lg">
+					<div class="flex items-center gap-2 mb-1">
+						<img src="{{ url_for('static', filename='images/icons/revive.webp') }}" alt="Revive" width="20">
+						<span class="font-medium">{{ translations.get('dashboard', {}).get('next_revive', 'Next Free Revive') }}</span>
+					</div>
+					<div id="revive-countdown" class="text-2xl font-mono">--:--:--</div>
+					<p class="text-sm text-gray-400 mt-1">{{ translations.get('dashboard', {}).get('revive_description', 'All dead players will be revived') }}</p>
+				</div>
+			</div>
+		</div> 
+    </div>
+
+    <!-- Two-column section -->
+    <div class="flex flex-col lg:flex-row gap-6 mb-6">
+        <!-- Left column (wider space) -->
+        <div class="w-full lg:w-3/4 bg-gray-800/50 rounded-lg p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <img src="../static/images/icons/mapa.webp" width="40">
+                <h2 class="text-2xl font-bold">A cidade</h2>
+            </div>
+            <p class="text-gray-300 mb-6">
+                É na cidade que você encontra direções para chegar a vários pontos de interesse. Perguntando na Taverna, você consegue informações de como chegar nesses lugares:
+            </p>
+
+            <!-- Mobile view: List of buildings -->
+            <div class="block lg:hidden mb-6">
+                <h3 class="text-xl font-bold mb-4">Locais da Cidade</h3>
+                <ul class="space-y-4">
+                    {% for building in buildings %}
+                    <li class="bg-gray-700/50 p-3 rounded-lg">
+                        <a href="{{ building.url }}" class="text-blue-400 hover:text-blue-300 font-medium">
+                            <img src="{{ url_for('static', filename='images/icons/' + building.icon) }}" 
+                             alt="{{ building.name }}" class="w-8 h-8 object-contain">{{ building.name }}
+                        </a>
+                        <p class="text-sm text-gray-400 mt-1">{{ building.description }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Desktop view: Interactive map -->
+            <div class="hidden lg:block relative">
+                <!-- Map image container -->
+                <div class="relative">
+                    <img src="../static/images/city-map.webp" alt="City Map" class="w-full rounded-lg shadow-lg">
+                    
+                    <!-- Building hotspots with icons -->
+                    {% for building in buildings %}
+                    <div 
+                        class="absolute {{ building.position }} w-12 h-12 bg-blue-100 bg-opacity-10 rounded-full cursor-pointer group flex items-center justify-center border border-blue-400 hover:border-blue-600 transition-all"
+                        data-name="{{ building.name }}"
+                        data-description="{{ building.description }}"
+                    >
+                        <a href="{{ building.url }}" class="absolute inset-0"></a>
+                        <img src="{{ url_for('static', filename='images/icons/' + building.icon) }}" 
+                             alt="{{ building.name }}" 
+                             class="w-8 h-8 object-contain">
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                            {{ building.name }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Building info panel -->
+                <div class="mt-4 p-4 bg-gray-700 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-2 text-white" id="building-name">Selecione um local</h3>
+                    <p id="building-description" class="text-gray-300">Passe o mouse sobre os pontos no mapa para ver informações sobre cada local.</p>
+                    <a href="#" id="building-link" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors hidden">Visitar</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right column (skills) -->
+        <div class="w-full lg:w-1/4 bg-gray-800/50 rounded-lg p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <img src="../static/images/icons/skills.webp" width="40">
+                <h2 class="text-2xl font-bold">{{ translations.game.character_stats.skills_title or 'Skills' }}</h2>
+            </div>
+            
+            <!-- Destreza Skill -->
+            <div class="bg-gray-700/50 p-4 rounded-lg mb-4 {% if current_user.character.faction == 'Veylan' %}border-l-4 border-amber-500{% endif %}">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ url_for('static', filename='images/skill_dex.webp') }}" 
+                         alt="{{ translations.game.attributes.skill_name_destreza }}"
+                         class="w-8 h-8">
+                    <span class="font-medium">{{ translations.game.attributes.skill_name_destreza }}</span>
+                    {% if current_user.character.faction == 'Veylan' %}
+                    <span class="ml-auto bg-amber-500 text-black text-xs px-2 py-1 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-300">{{ translations.game.attributes.skill_destreza_description }}</p>
+            </div>
+            
+            <!-- Força Skill -->
+            <div class="bg-gray-700/50 p-4 rounded-lg mb-4 {% if current_user.character.faction == 'Urghan' %}border-l-4 border-amber-500{% endif %}">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ url_for('static', filename='images/skill_forca.webp') }}" 
+                         alt="{{ translations.game.attributes.skill_name_forca }}"
+                         class="w-8 h-8">
+                    <span class="font-medium">{{ translations.game.attributes.skill_name_forca }}</span>
+                    {% if current_user.character.faction == 'Urghan' %}
+                    <span class="ml-auto bg-amber-500 text-black text-xs px-2 py-1 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-300">{{ translations.game.attributes.skill_forca_description }}</p>
+            </div>
+            
+            <!-- Inteligência Skill -->
+            <div class="bg-gray-700/50 p-4 rounded-lg mb-4 {% if current_user.character.faction == 'Aureen' %}border-l-4 border-amber-500{% endif %}">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ url_for('static', filename='images/skill_int.webp') }}" 
+                         alt="{{ translations.game.attributes.skill_name_inteligencia }}"
+                         class="w-8 h-8">
+                    <span class="font-medium">{{ translations.game.attributes.skill_name_inteligencia }}</span>
+                    {% if current_user.character.faction == 'Aureen' %}
+                    <span class="ml-auto bg-amber-500 text-black text-xs px-2 py-1 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-300">{{ translations.game.attributes.skill_inteligencia_description }}</p>
+            </div>
+            
+            <!-- Devoção Skill -->
+            <div class="bg-gray-700/50 p-4 rounded-lg mb-4 {% if current_user.character.faction == 'Camyra' %}border-l-4 border-amber-500{% endif %}">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ url_for('static', filename='images/skill_devocao.webp') }}" 
+                         alt="{{ translations.game.attributes.skill_name_devocao }}"
+                         class="w-8 h-8">
+                    <span class="font-medium">{{ translations.game.attributes.skill_name_devocao }}</span>
+                    {% if current_user.character.faction == 'Camyra' %}
+                    <span class="ml-auto bg-amber-500 text-black text-xs px-2 py-1 rounded-full"></span>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-300">{{ translations.game.attributes.skill_devocao_description }}</p>
+            </div>
+            
+            <div class="bg-gray-700/50 p-4 rounded-lg border-l-4 border-amber-500">
+                <h3 class="font-bold mb-2">Bônus de facção</h3>
+                <p class="text-sm text-gray-300">Todas as facções tem acesso a todas as skills. O que acontece é que o Bônus te dá ainda mais chances de que a skill seja ativada.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full width activity section -->
+    <div class="bg-gray-800/50 rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">{{ translations.get('dashboard', {}).get('activity_title', 'Recent Activity') }}</h2>
+        <ul class="space-y-3">
+            {% for event in recent_activity %}
+                <li class="border-b border-gray-700 pb-2">{{ event.description }}</li>
+            {% else %}
+                <li class="text-gray-400">{{ translations.get('dashboard', {}).get('no_activity', 'No recent activity') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<!-- JavaScript for interactive map -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hotspots = document.querySelectorAll('[data-name]');
+    const nameElement = document.getElementById('building-name');
+    const descElement = document.getElementById('building-description');
+    const linkElement = document.getElementById('building-link');
+    
+    hotspots.forEach(hotspot => {
+        hotspot.addEventListener('mouseenter', function() {
+            nameElement.textContent = this.dataset.name;
+            descElement.textContent = this.dataset.description;
+            linkElement.href = this.querySelector('a').href;
+            linkElement.classList.remove('hidden');
+        });
+        
+        hotspot.addEventListener('mouseleave', function() {
+            nameElement.textContent = 'Selecione um local';
+            descElement.textContent = 'Passe o mouse sobre os pontos no mapa para ver informações sobre cada local.';
+            linkElement.classList.add('hidden');
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Constants
+    const REFRESH_INTERVAL = 21 * 60 * 60 * 1000; // 21 hours in milliseconds
+    const REVIVE_INTERVAL = 3 * 60 * 60 * 1000;   // 3 hours in milliseconds
+
+    // Calculate next event time based on a fixed interval
+    function calculateNextEvent(interval) {
+        const now = new Date();
+        // Get the time since epoch
+        const timeSinceEpoch = now.getTime();
+        // Calculate how many intervals have passed
+        const intervalsPassed = Math.floor(timeSinceEpoch / interval);
+        // Calculate next event time
+        const nextEvent = new Date((intervalsPassed + 1) * interval);
+        return nextEvent;
+    }
+
+    // Format time as HH:MM:SS
+    function formatTime(ms) {
+        if (ms <= 0) return "00:00:00";
+        
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Update countdowns
+    function updateCountdowns() {
+        const now = new Date();
+        const nextRefresh = calculateNextEvent(REFRESH_INTERVAL);
+        const nextRevive = calculateNextEvent(REVIVE_INTERVAL);
+        
+        // Calculate time remaining
+        let refreshRemaining = nextRefresh - now;
+        let reviveRemaining = nextRevive - now;
+
+        // Handle case where we're exactly at the event time
+        if (refreshRemaining < 0) refreshRemaining = 0;
+        if (reviveRemaining < 0) reviveRemaining = 0;
+
+        // Update displays
+        document.getElementById('refresh-countdown').textContent = formatTime(refreshRemaining);
+        document.getElementById('revive-countdown').textContent = formatTime(reviveRemaining);
+        
+        // If we've hit zero, refresh the page to trigger server-side checks
+        if (refreshRemaining <= 0 || reviveRemaining <= 0) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    }
+    
+    // Initial update
+    updateCountdowns();
+    
+    // Update every second
+    setInterval(updateCountdowns, 1000);
+});
+
+</script>
+{% endblock %}

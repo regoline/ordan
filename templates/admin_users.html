@@ -1,0 +1,54 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>{{ translations.admin.manage_users }}</h2>
+    
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>IP Address</th>
+                <th>Created At</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr {% if user.ip_address in duplicate_ips %}class="duplicate-ip"{% endif %}>
+                <td>
+                    {{ user.username }}
+                    {% if user.is_admin %}<span class="admin-badge">Admin</span>{% endif %}
+                </td>
+                <td>
+                    {{ user.ip_address }}
+                    {% if user.ip_address in duplicate_ips %}
+                        <span class="warning-badge">Duplicate</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    {% if user.last_login_at %}
+                        {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('game.edit_user', user_id=user.id) }}" class="btn btn-edit">
+                        {{ translations.admin.edit }}
+                    </a>
+                    <form method="POST" action="{{ url_for('game.delete_user', user_id=user.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-delete" 
+                                onclick="return confirm('{{ translations.admin.delete_confirm }}');">
+                            {{ translations.admin.delete }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<section class="w-full p-2 sm:p-4 max-w-4xl mx-auto">
+    <!-- Battle Header -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <div class="flex items-center gap-3">
+            <img src="{{ url_for('static', filename='images/icons/battle.webp') }}" width="40">
+            <h2 class="text-xl sm:text-2xl font-bold">Battle Details</h2>
+        </div>
+    </div>
+    
+    <!-- Participants -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <!-- Attacker -->
+            <div class="text-center w-full sm:w-5/12">
+                <div class="bg-gray-700/50 p-4 rounded-lg">
+                    <img src="{{ url_for('static', filename='images/' + battle.attacker_faction|lower + '.webp') }}" 
+                         alt="{{ battle.attacker_name }}"
+                         class="w-20 h-20 mx-auto object-contain mb-2">
+                    <h3 class="text-lg sm:text-xl font-semibold 
+                        {% if battle.attacker_faction|lower == 'veylan' %}text-purple-500
+                        {% elif battle.attacker_faction|lower == 'urghan' %}text-amber-700
+                        {% elif battle.attacker_faction|lower == 'aureen' %}text-blue-500
+                        {% else %}text-green-600{% endif %}">
+                        {{ battle.attacker_name }}
+                    </h3>
+                    <p class="text-gray-300 text-sm">Level: {{ battle.attacker_level }}</p>
+                </div>
+            </div>
+            
+            <!-- VS -->
+            <div class="text-center w-full sm:w-2/12">
+                <div class="bg-gray-700/50 p-2 rounded-full inline-block">
+                    <span class="text-xl font-bold">VS</span>
+                </div>
+            </div>
+            
+            <!-- Defender -->
+            <div class="text-center w-full sm:w-5/12">
+                <div class="bg-gray-700/50 p-4 rounded-lg">
+                    <img src="{{ url_for('static', filename='images/' + battle.defender_faction|lower + '.webp') }}" 
+                         alt="{{ battle.defender_name }}"
+                         class="w-20 h-20 mx-auto object-contain mb-2">
+                    <h3 class="text-lg sm:text-xl font-semibold 
+                        {% if battle.defender_faction|lower == 'veylan' %}text-purple-500
+                        {% elif battle.defender_faction|lower == 'urghan' %}text-amber-700
+                        {% elif battle.defender_faction|lower == 'aureen' %}text-blue-500
+                        {% else %}text-green-600{% endif %}">
+                        {{ battle.defender_name }}
+                    </h3>
+                    <p class="text-gray-300 text-sm">Level: {{ battle.defender_level }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Outcome -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h3 class="text-lg font-semibold mb-2">Outcome</h3>
+        <div class="bg-gray-700/50 p-3 rounded-lg">
+            <p class="text-center">
+                <span class="{% if battle.winner_faction|lower == 'veylan' %}text-purple-500
+                            {% elif battle.winner_faction|lower == 'urghan' %}text-amber-700
+                            {% elif battle.winner_faction|lower == 'aureen' %}text-blue-500
+                            {% else %}text-green-600{% endif %} font-bold">
+                    {{ battle.winner_name }} won!
+                </span>
+            </p>
+            <p class="text-center text-gray-400 text-sm">
+                Battle Date: {{ battle.timestamp.strftime('%Y-%m-%d %H:%M') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Stats Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+        <!-- Reputation Changes -->
+        <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6">
+            <h4 class="text-md sm:text-lg font-semibold mb-3">Reputation Changes</h4>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-gray-700/50 p-2 sm:p-3 rounded">
+                    <span class="{% if battle.attacker_faction|lower == 'veylan' %}text-purple-500
+                                {% elif battle.attacker_faction|lower == 'urghan' %}text-amber-700
+                                {% elif battle.attacker_faction|lower == 'aureen' %}text-blue-500
+                                {% else %}text-green-600{% endif %}">
+                        {{ battle.attacker_name }}
+                    </span>
+                    <span class="{% if battle.attacker_reputation_change >= 0 %}text-green-500{% else %}text-red-500{% endif %} font-bold">
+                        {{ "+" if battle.attacker_reputation_change >= 0 }}{{ battle.attacker_reputation_change }}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-700/50 p-2 sm:p-3 rounded">
+                    <span class="{% if battle.defender_faction|lower == 'veylan' %}text-purple-500
+                                {% elif battle.defender_faction|lower == 'urghan' %}text-amber-700
+                                {% elif battle.defender_faction|lower == 'aureen' %}text-blue-500
+                                {% else %}text-green-600{% endif %}">
+                        {{ battle.defender_name }}
+                    </span>
+                    <span class="{% if battle.defender_reputation_change >= 0 %}text-green-500{% else %}text-red-500{% endif %} font-bold">
+                        {{ "+" if battle.defender_reputation_change >= 0 }}{{ battle.defender_reputation_change }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- XP Gain -->
+        <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6">
+            <h4 class="text-md sm:text-lg font-semibold mb-3">Experience Gained</h4>
+            <div class="bg-gray-700/50 p-3 rounded-lg">
+                <p>
+                    <span class="{% if battle.winner_faction|lower == 'veylan' %}text-purple-500
+                                {% elif battle.winner_faction|lower == 'urghan' %}text-amber-700
+                                {% elif battle.winner_faction|lower == 'aureen' %}text-blue-500
+                                {% else %}text-green-600{% endif %}">
+                        {{ battle.winner_name }}
+                    </span>
+                    <span class="text-yellow-400 font-bold">{{ battle.xp_gained }} XP</span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Gold Changes -->
+        <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 md:col-span-2">
+            <h4 class="text-md sm:text-lg font-semibold mb-3">Gold Changes</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="flex justify-between items-center bg-gray-700/50 p-2 sm:p-3 rounded">
+                    <span class="{% if battle.attacker_faction|lower == 'veylan' %}text-purple-500
+                                {% elif battle.attacker_faction|lower == 'urghan' %}text-amber-700
+                                {% elif battle.attacker_faction|lower == 'aureen' %}text-blue-500
+                                {% else %}text-green-600{% endif %}">
+                        {{ battle.attacker_name }}
+                    </span>
+                    <span class="{% if battle.attacker_gold_change >= 0 %}text-yellow-400{% else %}text-red-500{% endif %} font-bold">
+                        {{ "+" if battle.attacker_gold_change >= 0 }}{{ battle.attacker_gold_change }} gold
+                    </span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-700/50 p-2 sm:p-3 rounded">
+                    <span class="{% if battle.defender_faction|lower == 'veylan' %}text-purple-500
+                                {% elif battle.defender_faction|lower == 'urghan' %}text-amber-700
+                                {% elif battle.defender_faction|lower == 'aureen' %}text-blue-500
+                                {% else %}text-green-600{% endif %}">
+                        {{ battle.defender_name }}
+                    </span>
+                    <span class="{% if battle.defender_gold_change >= 0 %}text-yellow-400{% else %}text-red-500{% endif %} font-bold">
+                        {{ "+" if battle.defender_gold_change >= 0 }}{{ battle.defender_gold_change }} gold
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detailed Log -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <div class="flex items-center gap-3 mb-3">
+            <img src="{{ url_for('static', filename='images/icons/log.webp') }}" width="30">
+            <h4 class="text-lg font-semibold">Detailed Battle Log</h4>
+        </div>
+        <div class="bg-gray-900 rounded-lg p-3 sm:p-4">
+            <ul class="space-y-2 font-mono text-xs sm:text-sm">
+                {% for entry in battle.log %}
+                    <li class="border-b border-gray-800/50 pb-2 last:border-0 last:pb-0">{{ entry|safe }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Return Button -->
+    <div class="text-center">
+        <a href="{{ url_for('game.dashboard') }}" 
+           class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Return to Dashboard
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-4">
+    <!-- Bank Header -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold">{{ translations.get('game', {}).get('bank', {}).get('title', 'Bank') }}</h2>
+    </div>
+
+    <!-- Balances -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- On Hand Balance -->
+        <div class="bg-gray-800/50 rounded-lg p-6 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold mb-2">{{ translations.get('game', {}).get('bank', {}).get('on_hand', 'On Hand') }}</h3>
+                <div class="text-3xl font-bold">{{ current_user.character.gold }}</div>
+            </div>
+            <img src="{{ url_for('static', filename='images/icons/gold.webp') }}" alt="Gold" class="w-12 h-12">
+        </div>
+
+        <!-- Bank Balance -->
+        <div class="bg-gray-800/50 rounded-lg p-6 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold mb-2">{{ translations.get('game', {}).get('bank', {}).get('in_bank', 'In Bank') }}</h3>
+                <div class="text-3xl font-bold">{{ current_user.character.bank_gold }}</div>
+            </div>
+            <img src="{{ url_for('static', filename='images/icons/banco.webp') }}" alt="Bank" class="w-12 h-12">
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Deposit -->
+        <div class="bg-gray-800/50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">{{ translations.get('game', {}).get('bank', {}).get('deposit', 'Deposit') }}</h3>
+            <form method="POST" action="{{ url_for('game.bank_deposit') }}" class="space-y-4">
+                <input type="number" name="amount" min="1" 
+                       max="{{ current_user.character.gold }}"
+                       placeholder="{{ translations.get('game', {}).get('bank', {}).get('amount', 'Amount') }}"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-blue-500 focus:border-blue-500">
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors">
+                        {{ translations.get('game', {}).get('bank', {}).get('deposit', 'Deposit') }}
+                    </button>
+                    <button type="submit" name="deposit_all" value="true" 
+                            class="flex-1 bg-green-700 hover:bg-green-800 text-white py-2 px-4 rounded transition-colors">
+                        {{ translations.get('game', {}).get('bank', {}).get('deposit_all', 'Deposit All') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Withdraw -->
+        <div class="bg-gray-800/50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">{{ translations.get('game', {}).get('bank', {}).get('withdraw', 'Withdraw') }}</h3>
+            <form method="POST" action="{{ url_for('game.bank_withdraw') }}" class="space-y-4">
+                <input type="number" name="amount" min="1" 
+                       max="{{ current_user.character.bank_gold }}"
+                       placeholder="{{ translations.get('game', {}).get('bank', {}).get('amount', 'Amount') }}"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-blue-500 focus:border-blue-500">
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors">
+                        {{ translations.get('game', {}).get('bank', {}).get('withdraw', 'Withdraw') }}
+                    </button>
+                    <button type="submit" name="withdraw_all" value="true" 
+                            class="flex-1 bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 rounded transition-colors">
+                        {{ translations.get('game', {}).get('bank', {}).get('withdraw_all', 'Withdraw All') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bank Info -->
+    <div class="bg-gray-800/50 rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-4">{{ translations.get('game', {}).get('bank', {}).get('how_it_works', 'How It Works') }}</h3>
+        <ul class="space-y-2">
+            <li class="flex items-start">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2"></span>
+                {{ translations.get('game', {}).get('bank', {}).get('rule1', 'Gold in bank is safe from PvP losses') }}
+            </li>
+            <li class="flex items-start">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2"></span>
+                {{ translations.get('game', {}).get('bank', {}).get('rule2', 'You need gold on hand to buy items') }}
+            </li>
+            <li class="flex items-start">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2"></span>
+                {{ translations.get('game', {}).get('bank', {}).get('rule3', '5% of on-hand gold is lost when defeated in PvP') }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

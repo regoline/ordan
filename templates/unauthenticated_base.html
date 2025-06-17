@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block body %}
+   
+   
+   <header class="fixed top-0 left-0 right-0 bg-header-bg backdrop-blur-sm shadow-md z-50 h-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex justify-between items-center w-full sm:w-auto">
+        <img src="../static/images/logo.webp" alt="Logo" class="h-12">
+        <button id="menu-toggle" class="sm:hidden text-white focus:outline-none">
+            ☰
+        </button>
+    </div>
+
+    <nav id="mobile-menu" class="hidden sm:flex flex-col sm:flex-row sm:items-center gap-4 mt-4 sm:mt-0 sm:ml-auto">
+        <a href="{{ url_for('auth.login') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+            {{ translations.get('navigation', {}).get('login', 'Log In') }}
+        </a>
+        <a href="{{ url_for('auth.signup') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+            {{ translations.get('navigation', {}).get('signup', 'Sign Up') }}
+        </a>
+      
+        
+   
+   <!-- 
+    <header class="fixed top-0 left-0 right-0 bg-header-bg backdrop-blur-sm shadow-md z-50 h-[75px] px-8 py-4 flex justify-between items-center flex-wrap">
+        <img src="../static/images/logo.webp" alt="Logo" class="h-12">
+        <nav class="flex gap-6 flex-wrap justify-end flex-1 min-w-0">
+            <a href="{{ url_for('auth.login') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+                {{ translations.get('navigation', {}).get('login', 'Log In') }}
+            </a>
+            <a href="{{ url_for('auth.signup') }}" class="text-gray-200 no-underline font-medium hover:text-secondary transition-colors duration-300 px-2 py-1">
+                {{ translations.get('navigation', {}).get('signup', 'Sign Up') }}
+            </a>
+        </nav>
+    -->
+        <!-- <div class="language-switcher flex gap-2 items-center flex-wrap w-full mt-2">
+            {% for code, name in config.AVAILABLE_LANGUAGES.items() %}
+                <a href="{{ url_for('auth.set_language', language=code) }}" 
+                   class="text-gray-200 no-underline text-sm {% if session.get('language', config.DEFAULT_LANGUAGE) == code %}font-bold text-secondary{% endif %}">
+                    {{ name }}
+                </a>
+                {% if not loop.last %}|{% endif %}
+            {% endfor %}
+        </div>
+        -->
+        <div class="relative mt-2">
+		  <select onchange="location = this.value;" class="bg-input-bg text-gray-200 text-sm border border-input-border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-input-focus">
+			{% for code, name in config.AVAILABLE_LANGUAGES.items() %}
+			  <option value="{{ url_for('auth.set_language', language=code) }}"
+				{% if session.get('language', config.DEFAULT_LANGUAGE) == code %}selected{% endif %}>
+				{{ name }}
+			  </option>
+			{% endfor %}
+		  </select>
+		</div> </nav>
+    </header>
+
+    <main class="flex-1 flex flex-col pt-[125px] px-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages fixed top-[70px] right-5 z-[1000] flex flex-col gap-2 max-w-[400px] w-full">
+                    {% for category, message in messages %}
+                        <div class="flash px-5 py-3 mb-2 rounded shadow-md text-white relative animate-[slideIn_1.3s_ease-out] 
+                            {% if category == 'success' %}bg-green-700{% endif %}
+                            {% if category == 'error' %}bg-error{% endif %}
+                            {% if category == 'warning' %}bg-amber-600{% endif %}
+                            {% if category == 'info' %}bg-blue-700{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-footer-bg backdrop-blur-sm py-4 text-center">
+        <p class="m-0 text-gray-200 text-sm">{{ translations.get('general', {}).get('footer', '© 2025 Ordan') }}</p>
+    </footer>
+    
+    <script>
+  document.getElementById('menu-toggle').addEventListener('click', function () {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+  });
+</script>
+{% endblock %}

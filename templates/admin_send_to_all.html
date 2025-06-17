@@ -1,0 +1,61 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+<section class="admin-send-to-all">
+    <h2>Send Message to All Players</h2>
+    
+    <form method="POST" action="{{ url_for('game.admin_send_to_all') }}">
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="body">Message:</label>
+            <textarea id="body" name="body" rows="10" required></textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-send">Send to All Players</button>
+            <a href="{{ url_for('game.admin_messages') }}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</section>
+
+<style>
+    .admin-send-to-all {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--input-border);
+        border-radius: 4px;
+        background-color: var(--input-bg);
+        color: var(--text-color);
+    }
+    
+    textarea {
+        min-height: 200px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %}

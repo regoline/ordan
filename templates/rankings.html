@@ -1,0 +1,542 @@
+{% extends "authenticated_base2.html" %}
+{% set translations = translations or {} %}
+
+{% block content %}
+<section class="w-full p-4">
+    <!-- Player Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/rankings_player.webp" width="40" alt="Player Rankings">
+            <h2 class="text-2xl font-bold">{{ translations.get('rankings', {}).get('title', 'Player Rankings') }}</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- By XP -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">
+                    {{ translations.get('rankings', {}).get('by_xp', 'By XP') }}
+                </h4>
+                <ol class="space-y-2">
+                    {% for character in top_xp[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            Lvl {{ character.level }} ({{ character.current_xp }} XP)
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- By Level -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">
+                    {{ translations.get('rankings', {}).get('by_level', 'By Level') }}
+                </h4>
+                <ol class="space-y-2">
+                    {% for character in top_level[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            Lvl {{ character.level }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attribute Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/rankings_stats.webp" width="40" alt="Attribute Rankings">
+            <h2 class="text-2xl font-bold">Attribute Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Strength -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-600 pb-2">
+                    <img src="../static/images/status_forca.webp" width="25" alt="Strength">
+                    <h4 class="text-lg font-semibold">By Strength</h4>
+                </div>
+                <ol class="space-y-2">
+                    {% for character in top_forca %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            {{ "%.2f"|format(character.forca) }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Dexterity -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-600 pb-2">
+                    <img src="../static/images/status_dex.webp" width="25" alt="Dexterity">
+                    <h4 class="text-lg font-semibold">Top Dex</h4>
+                </div>
+                <ol class="space-y-2">
+                    {% for character in top_destreza %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            {{ "%.2f"|format(character.destreza) }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Intelligence -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-600 pb-2">
+                    <img src="../static/images/status_int.webp" width="25" alt="Intelligence">
+                    <h4 class="text-lg font-semibold">By Int</h4>
+                </div>
+                <ol class="space-y-2">
+                    {% for character in top_inteligencia %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            {{ "%.2f"|format(character.inteligencia) }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Devotion -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-600 pb-2">
+                    <img src="../static/images/status_devocao.webp" width="25" alt="Devotion">
+                    <h4 class="text-lg font-semibold">By Devotion</h4>
+                </div>
+                <ol class="space-y-2">
+                    {% for character in top_devocao %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            {{ "%.2f"|format(character.devocao) }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Combined -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-600 pb-2">
+                    <img src="../static/images/icons/combined.webp" width="25" alt="Combined">
+                    <h4 class="text-lg font-semibold">Top Combined</h4>
+                </div>
+                <ol class="space-y-2">
+                    {% for character in top_combined %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            {{ "%.2f"|format(character.forca + character.destreza + character.inteligencia + character.devocao) }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gold Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/gold.webp" width="40" alt="Gold Rankings">
+            <h2 class="text-2xl font-bold">Gold Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Gold on Hand -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Top Gold on Hand</h4>
+                <ol class="space-y-2">
+                    {% for character in gold[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-yellow-400">
+                            {{ character.gold }} gold
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Gold in Bank -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Top Gold in Bank</h4>
+                <ol class="space-y-2">
+                    {% for character in bank_gold[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-yellow-400">
+                            {{ character.bank_gold }} gold
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mining Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/mining.webp" width="40" alt="Mining Rankings">
+            <h2 class="text-2xl font-bold">Mining Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Mining Level -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Top Mining Level</h4>
+                <ol class="space-y-2">
+                    {% for character in mining_level[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-300">
+                            Level {{ character.mining_level }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Diamonds -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Top Diamonds</h4>
+                <ol class="space-y-2">
+                    {% for character in diamonds[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-blue-300">
+                            {{ character.diamonds }} diamonds
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fight Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/rankings_fight.webp" width="40" alt="Fight Rankings">
+            <h2 class="text-2xl font-bold">Fight Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Kills -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">
+                    {{ translations.get('rankings', {}).get('by_kills', 'By Kills') }}
+                </h4>
+                <ol class="space-y-2">
+                    {% for character in top_kills[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-red-400">
+                            {{ character.pvp_kills }} kills
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Deaths -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">By Deaths</h4>
+                <ol class="space-y-2">
+                    {% for character in top_deaths[:10] %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-gray-400">
+                            {{ character.deaths }} deaths
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reputation Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/rankings_reputation.webp" width="40" alt="Reputation Rankings">
+            <h2 class="text-2xl font-bold">Reputation Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Best Reputation -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Best Reputation</h4>
+                <ol class="space-y-2">
+                    {% for character in top_reputation %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-green-400">
+                            {{ character.reputation }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Worst Reputation -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Worst Reputation</h4>
+                <ol class="space-y-2">
+                    {% for character in worst_reputation %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + character.faction_image) }}" 
+                             alt="{{ character.faction }}" class="w-5 h-5">
+                        <a href="{{ url_for('game.view_character', character_id=character.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 flex-1">
+                            {{ character.name }}
+                        </a>
+                        <span class="text-sm text-red-400">
+                            {{ character.reputation }}
+                            {% if character.id == current_user.character.id %}
+                            <span class="text-yellow-400 ml-1">(You)</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faction Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <img src="../static/images/icons/rankings_faction.webp" width="40" alt="Faction Rankings">
+            <h2 class="text-2xl font-bold">Faction Rankings</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- By Kills -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">By Kills</h4>
+                <ol class="space-y-2">
+                    {% for faction in faction_kills %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + faction.image) }}" 
+                             alt="{{ faction.name }}" class="w-5 h-5">
+                        <span class="flex-1">{{ faction.name }}</span>
+                        <span class="text-sm text-red-400">{{ faction.kills }} kills</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- By Deaths -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">By Deaths</h4>
+                <ol class="space-y-2">
+                    {% for faction in faction_deaths %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + faction.image) }}" 
+                             alt="{{ faction.name }}" class="w-5 h-5">
+                        <span class="flex-1">{{ faction.name }}</span>
+                        <span class="text-sm text-gray-400">{{ faction.deaths }} deaths</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- By Player Count -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">By Player Count</h4>
+                <ol class="space-y-2">
+                    {% for faction in faction_count %}
+                    <li class="flex items-center gap-2 p-2 hover:bg-gray-700/30 rounded">
+                        <span class="text-gray-400 w-6 text-right">{{ loop.index }}.</span>
+                        <img src="{{ url_for('static', filename='images/' + faction.image) }}" 
+                             alt="{{ faction.name }}" class="w-5 h-5">
+                        <span class="flex-1">{{ faction.name }}</span>
+                        <span class="text-sm text-blue-400">{{ faction.count }} players</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Faction Distribution -->
+            <div class="bg-gray-700/50 rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 border-b border-gray-600 pb-2">Faction Distribution</h4>
+                <div class="flex justify-center">
+                    <canvas id="factionPieChart" width="250" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chart.js for pie chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('factionPieChart').getContext('2d');
+    const factions = {{ faction_pie|tojson|safe }};
+    
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: factions.map(f => f.name),
+            datasets: [{
+                data: factions.map(f => f.count),
+                backgroundColor: factions.map(f => f.color),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "authenticated_base.html" %}
+
+{% block content %}
+<section class="admin-messages">
+    <h2>Message System Administration</h2>
+    
+    <div class="admin-actions">
+        <a href="{{ url_for('game.admin_send_to_all') }}" class="btn btn-primary">
+            Send Message to All Players
+        </a>
+    </div>
+    <!-- Add this section somewhere in the template -->
+	<div class="admin-reports">
+		<h3>Message Reports</h3>
+		
+		{% if reports %}
+			<table class="reports-table">
+				<thead>
+					<tr>
+						<th>Message</th>
+						<th>Reporter</th>
+						<th>Reason</th>
+						<th>Reported At</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for report in reports %}
+					<tr>
+						<td>
+							<a href="{{ url_for('game.view_message', message_id=report.message_id) }}">
+								{{ report.message.subject }}
+							</a>
+						</td>
+						<td>{{ report.reporter.name }}</td>
+						<td>{{ report.reason }}</td>
+						<td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+						<td>
+							<form method="POST" action="{{ url_for('game.resolve_report', report_id=report.id) }}" 
+								  style="display:inline;">
+								<button type="submit" class="btn btn-resolve">Resolve</button>
+							</form>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<p>No pending reports</p>
+		{% endif %}
+	</div>
+    <div class="messages-list">
+        {% if messages %}
+            <table class="messages-table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Subject</th>
+                        <th>Sent</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in messages %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('game.view_character', character_id=message.sender.id) }}">
+                                {{ message.sender.name }}
+                            </a>
+                            {% if message.is_admin_message %}
+                                <span class="admin-badge">Admin</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('game.view_character', character_id=message.recipient.id) }}">
+                                {{ message.recipient.name }}
+                            </a>
+                        </td>
+                        <td>{{ message.subject }}</td>
+                        <td>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if message.is_read %}
+                                <span class="read-status">Read</span>
+                            {% else %}
+                                <span class="unread-status">Unread</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('game.view_message', message_id=message.id) }}" class="btn btn-view">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-messages">
+                <p>No messages in the system</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .admin-messages {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .admin-actions {
+        margin-bottom: 1.5rem;
+    }
+    
+    .messages-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .messages-table th, .messages-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+    }
+    
+    .messages-table th {
+        background-color: var(--table-header-bg);
+    }
+    
+    .messages-table tr:hover {
+        background-color: var(--row-hover-bg);
+    }
+    
+    .read-status {
+        color: var(--success-color);
+    }
+    
+    .unread-status {
+        color: var(--warning-color);
+        font-weight: bold;
+    }
+    
+    .admin-badge {
+        background-color: var(--admin-color);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+    
+    .no-messages {
+        text-align: center;
+        padding: 2rem;
+        color: var(--muted-text);
+    }
+</style>
+{% endblock %}

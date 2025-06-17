@@ -1,0 +1,68 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full max-w-6xl mx-auto p-4 md:p-6">
+    <!-- Market Header -->
+    <div class="flex items-center gap-3 mb-8">
+        <img src="../static/images/icons/market.webp" width="50" alt="Market">
+        <h2 class="text-2xl font-bold text-white">
+            {{ translations['game']['market']['title'] }}
+        </h2>
+    </div>
+
+    <!-- Shop Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <!-- Bank Card -->
+        <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 hover:bg-gray-700/70 transition-colors border border-gray-700">
+            <div class="flex items-center gap-3 mb-3">
+                <img src="../static/images/icons/banco.webp" width="50" alt="Bank">
+                <h2 class="text-xl font-bold">
+                    <a href="{{ url_for('game.bank') }}" class="text-blue-400 hover:text-blue-300">
+                        {{ translations.get('game', {}).get('bank', {}).get('title', 'Bank') }}
+                    </a>
+                </h2>
+            </div>
+            <p class="text-gray-300">Não é bom sair por ai com tanto dinheiro no bolso.</p>
+        </div>
+
+        <!-- Weapon Shop Card -->
+        <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 hover:bg-gray-700/70 transition-colors border border-gray-700">
+            <div class="flex items-center gap-3 mb-3">
+                <img src="../static/images/icons/arma.webp" width="50" alt="Weapons">
+                <h2 class="text-xl font-bold">
+                    <a href="{{ url_for('game.weapon_shop') }}" class="text-blue-400 hover:text-blue-300">
+                        {{ translations.shop.weapons if translations and translations.shop and translations.shop.weapons else 'Weapon Shop' }}
+                    </a>
+                </h2>
+            </div>
+            <p class="text-gray-300">Procurando uma Armadura? Lugar errado.. Ah! Uma arma dura? Podemos ver se tem.</p>
+        </div>
+
+        <!-- Armor Shop Card -->
+        <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 hover:bg-gray-700/70 transition-colors border border-gray-700">
+            <div class="flex items-center gap-3 mb-3">
+                <img src="../static/images/icons/armadura.webp" width="50" alt="Armor">
+                <h2 class="text-xl font-bold">
+                    <a href="{{ url_for('game.armor_shop') }}" class="text-blue-400 hover:text-blue-300">
+                        {{ translations.shop.armor if translations and translations.shop and translations.shop.armor else 'Armor Shop' }}
+                    </a>
+                </h2>
+            </div>
+            <p class="text-gray-300">Procurando uma Arma Dura? Lugar errado.. Ahh! Uma armadura! Sim, temos.</p>
+        </div>
+
+        <!-- Magic Shop Card -->
+        <div class="bg-gray-800/50 rounded-lg p-4 md:p-6 hover:bg-gray-700/70 transition-colors border border-gray-700">
+            <div class="flex items-center gap-3 mb-3">
+                <img src="../static/images/icons/mercado.webp" width="50" alt="Magic Items">
+                <h2 class="text-xl font-bold">
+                    <a href="{{ url_for('game.magic_shop') }}" class="text-blue-400 hover:text-blue-300">
+                        Mercado Mágico
+                    </a>
+                </h2>
+            </div>
+            <p class="text-gray-300">Itens Mágicos</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

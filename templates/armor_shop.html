@@ -1,0 +1,111 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-2 sm:p-4">
+    <!-- Shop Header -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold">{{ translations.shop.armor if translations and translations.shop and translations.shop.armor else 'Armor Shop' }}</h2>
+    </div>
+    
+    <!-- Armor Tabs - Fixed horizontal scrolling -->
+    <div class="relative mb-4 sm:mb-6">
+        <div class="absolute inset-0 overflow-x-auto no-scrollbar">
+            <div class="flex space-x-1 pb-2 px-2 sm:px-0" style="min-width: max-content">
+                <button class="armor-tab-button px-3 py-1.5 rounded whitespace-nowrap bg-blue-600 text-white text-sm" data-armor-tab="head">
+                    {{ translations.shop.armor_head if translations and translations.shop and translations.shop.armor_head else 'Head' }}
+                </button>
+                <button class="armor-tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-armor-tab="body">
+                    {{ translations.shop.armor_body if translations and translations.shop and translations.shop.armor_body else 'Body' }}
+                </button>
+                <button class="armor-tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-armor-tab="gloves">
+                    {{ translations.shop.armor_gloves if translations and translations.shop and translations.shop.armor_gloves else 'Gloves' }}
+                </button>
+                <button class="armor-tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-armor-tab="pants">
+                    {{ translations.shop.armor_pants if translations and translations.shop and translations.shop.armor_pants else 'Pants' }}
+                </button>
+                <button class="armor-tab-button px-3 py-1.5 rounded whitespace-nowrap bg-gray-700 hover:bg-gray-600 text-white text-sm" data-armor-tab="boots">
+                    {{ translations.shop.armor_boots if translations and translations.shop and translations.shop.armor_boots else 'Boots' }}
+                </button>
+            </div>
+        </div>
+        <div class="h-10"></div> <!-- Spacer for absolute positioned tabs -->
+    </div>
+    
+    {% for slot in ['head', 'body', 'gloves', 'pants', 'boots'] %}
+    <div class="armor-content {% if slot == 'head' %}block{% else %}hidden{% endif %}" id="armor-{{ slot }}">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for armor_item in armor if armor_item.armor_type == slot %}
+                {% set armor_data = translations.get('game', {}).get('items', {}).get('armor', {}).get(slot, {}).get(armor_item.translation_key, {}) %}
+                
+                <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="{{ url_for('static', filename='images/items/' + armor_item.translation_key + '.webp') }}" 
+                             alt="{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}"
+                             class="w-10 h-10 object-contain rounded"
+                             onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.webp') }}'">
+                        <h3 class="text-sm sm:text-base font-semibold">{{ armor_data.get('name', armor_item.translation_key.replace('_', ' ').title()) }}</h3>
+                    </div>
+                    
+                    <p class="text-gray-300 text-xs sm:text-sm mb-3">{{ armor_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                    
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.defense if translations and translations.shop and translations.shop.defense else 'Defense' }}: {{ armor_item.stats.defense }}</span>
+                        {% if armor_item.stats.health_bonus %}
+                            <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.health_bonus if translations and translations.shop and translations.shop.health_bonus else 'HP Bonus' }}: +{{ armor_item.stats.health_bonus }}</span>
+                        {% endif %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.price if translations and translations.shop and translations.shop.price else 'Price' }}: {{ armor_item.price }}</span>
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.level_required if translations and translations.shop and translations.shop.level_required else 'Level' }}: {{ armor_item.min_level }}</span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <form action="{{ url_for('game.buy_item', item_id=armor_item.id) }}" method="POST" class="flex-1">
+                            <input type="hidden" name="source" value="armor_shop">
+                            <button type="submit" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm {% if armor_item.price > character.gold %}opacity-50 cursor-not-allowed{% endif %}"
+                                    {% if armor_item.price > character.gold %}disabled{% endif %}>
+                                {{ translations.shop.buy if translations and translations.shop and translations.shop.buy else 'Buy' }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-6 text-gray-400 text-sm sm:text-base">
+                    {{ translations.shop.no_items if translations and translations.shop and translations.shop.no_items else 'No armor available' }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>
+
+<script>
+// Tab switching for armor sub-tabs
+document.querySelectorAll('.armor-tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Update tab buttons
+        document.querySelectorAll('.armor-tab-button').forEach(btn => {
+            btn.classList.remove('bg-blue-600');
+            btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+        });
+        button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+        button.classList.add('bg-blue-600');
+        
+        // Update content
+        document.querySelectorAll('.armor-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        document.getElementById(`armor-${button.dataset.armorTab}`).classList.remove('hidden');
+    });
+});
+</script>
+{% endblock %}

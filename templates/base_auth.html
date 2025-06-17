@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', config.DEFAULT_LANGUAGE) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translations.get('general', {}).get('title', 'Ordan') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss flash messages after 5 seconds
+    const flashMessages = document.querySelectorAll('.flash');
+    flashMessages.forEach(message => {
+        // Add close button
+        const closeBtn = document.createElement('span');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.classList.add('close');
+        closeBtn.addEventListener('click', () => {
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+        });
+        message.appendChild(closeBtn);
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+        }, 5000);
+    });
+    
+    // Make messages dismissable by clicking anywhere
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.flash')) {
+            const message = e.target.closest('.flash');
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+        }
+    });
+});
+</script>
+<body class="unauthenticated {% if current_user.is_authenticated %}authenticated{% endif %}">
+    {% block body %}{% endblock %}
+</body>
+</html>

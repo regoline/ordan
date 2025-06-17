@@ -1,0 +1,349 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<!-- Added max-w-full and overflow-x-hidden to specifically prevent horizontal scrolling -->
+<section class="w-full max-w-full overflow-x-hidden p-2 sm:p-4">
+    <!-- Character Header -->
+    <div class="bg-gray-800/50 rounded-lg p-4 mb-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <img src="{{ url_for('static', filename='images/' + viewed_character.faction|lower + '.webp') }}" 
+                 alt="{{ viewed_character.name }}"
+                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-gray-600">
+            
+            <div class="flex-1 min-w-0"> <!-- Added min-w-0 to prevent flex item overflow -->
+               <div class="flex items-center gap-2 flex-wrap">
+					<h2 class="text-xl sm:text-2xl font-bold truncate">{{ viewed_character.name }}</h2>
+					<img src="{{ url_for('static', filename='images/icons/' + ('jail.webp' if viewed_character.is_jailed else 'morto.webp' if viewed_character.is_dead else 'vivo.webp')) }}" 
+						 alt="Status" class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+				</div>
+                
+                <div class="inline-block px-2 py-1 mt-2 text-sm sm:text-base rounded-full border-2 font-bold truncate" 
+                     style="color: {{ faction_data.color }}; border-color: {{ faction_data.color }};">
+                    {{ faction_data.name }}
+                </div>
+                
+                <!-- Actions Section -->
+                <div class="flex flex-wrap gap-2 mt-3">
+                    {% if current_user.character and 
+                      current_user.character.id != viewed_character.id and 
+                      not current_user.character.is_dead and 
+                      not viewed_character.is_dead and
+                      not current_user.character.is_jailed and
+                      not viewed_character.is_jailed %}
+                    <a href="{{ url_for('game.fight', opponent_id=viewed_character.id) }}" 
+                       class="bg-red-600 hover:bg-red-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm whitespace-nowrap">
+                        {{ translations.get('fight', {}).get('fight', 'Fight') }}
+                    </a>
+                    
+                    <a href="{{ url_for('game.send_message', recipient_id=viewed_character.id) }}" 
+                       class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm whitespace-nowrap">
+                        Message
+                    </a>
+                        
+                    {% elif current_user.character and current_user.character.id == viewed_character.id %}
+                        <button onclick="confirmDelete()" class="bg-red-600 hover:bg-red-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm whitespace-nowrap">
+                            Delete Account
+                        </button>
+                        <div id="deleteConfirmation" class="hidden mt-2 w-full">
+                            <p class="text-gray-300 text-xs sm:text-sm mb-1">This action is irreversible. Type your character name to confirm:</p>
+                            <input type="text" id="confirmName" class="w-full max-w-full p-1 sm:p-2 bg-gray-700 rounded text-white text-xs sm:text-sm mb-1">
+                            <button onclick="deleteAccount()" class="bg-red-600 hover:bg-red-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm">
+                                Confirm Delete
+                            </button>
+                        </div>
+                    {% endif %}
+                    
+                    {% if is_admin and not viewed_character.is_jailed %}
+                    <div class="flex items-center gap-1 bg-yellow-600 hover:bg-yellow-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm whitespace-nowrap">
+                        <img src="{{ url_for('static', filename='images/jail.webp') }}" alt="Jail" class="w-4 h-4 sm:w-5 sm:h-5">
+                        <a href="{{ url_for('game.jail_character', character_id=viewed_character.id) }}">
+                            Jail
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Personal Information Section -->
+    <div class="bg-gray-800/50 rounded-lg p-4 mb-4">
+        <h3 class="text-lg font-bold mb-3 border-b border-gray-700 pb-1">Personal</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Player ID:</span>
+                <span class="block text-sm truncate">#{{ viewed_character.id }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Age:</span>
+                <span class="block text-sm">{{ ((now - viewed_character.created_at).days) }} days</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Last Login:</span>
+                <span class="block text-sm truncate">
+                    {% if viewed_character.user.last_login_at %}
+                        {{ viewed_character.user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Status:</span>
+                <span class="block text-sm truncate" style="color: {% if viewed_character.user.is_online() %}green{% else %}pink{% endif %};">
+                    {{ "Online" if viewed_character.user.is_online() else "Offline" }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="bg-gray-700/50 p-2 rounded">
+            <span class="text-gray-400 text-xs">Motto:</span>
+            {% if current_user.character and current_user.character.id == viewed_character.id %}
+                <form method="POST" action="{{ url_for('game.update_motto') }}" class="mt-1">
+                    <input type="text" name="motto" value="{{ viewed_character.motto or '' }}" 
+                           class="w-full p-1 sm:p-2 bg-gray-800 rounded text-white text-xs sm:text-sm border border-gray-600">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 sm:px-3 rounded text-xs sm:text-sm mt-1">
+                        Update
+                    </button>
+                </form>
+            {% else %}
+                <span class="block text-sm truncate">{{ viewed_character.motto or "No motto set" }}</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Battle Stats Section -->
+    <div class="bg-gray-800/50 rounded-lg p-4 mb-4">
+        <h3 class="text-lg font-bold mb-3 border-b border-gray-700 pb-1">Battle Stats</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Level:</span>
+                <span class="block text-sm">{{ viewed_character.level }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">HP:</span>
+                <span class="block text-sm">{{ viewed_character.healthpoints }}/{{ viewed_character.max_healthpoints }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Status:</span>
+                <span class="block text-sm flex items-center gap-1">
+                    {% if viewed_character.is_jailed %}
+                        <img src="{{ url_for('static', filename='images/icons/jail.webp') }}" class="w-4 h-4">
+                        Jailed
+                    {% elif viewed_character.is_dead %}
+                        <img src="{{ url_for('static', filename='images/icons/morto.webp') }}" class="w-4 h-4">
+                        Dead
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/icons/vivo.webp') }}" class="w-4 h-4">
+                        Alive
+                    {% endif %}
+                </span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Battles:</span>
+                <span class="block text-sm">
+                    {{ viewed_character.pvp_kills }}W / {{ viewed_character.deaths }}L
+                    ({% if viewed_character.pvp_kills + viewed_character.deaths > 0 %}
+                        {{ (viewed_character.pvp_kills / (viewed_character.pvp_kills + viewed_character.deaths) * 100)|round(1) }}%
+                    {% else %}0%{% endif %})
+                </span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Last Killed:</span>
+                <span class="block text-sm truncate">
+                    {% if viewed_character.last_killed %}
+                        <a href="{{ url_for('game.view_character', character_id=viewed_character.last_killed.id) }}" class="text-blue-400 hover:text-blue-300">
+                            {{ viewed_character.last_killed.name }}
+                        </a>
+                    {% else %}
+                        None
+                    {% endif %}
+                </span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Last Killed By:</span>
+                <span class="block text-sm truncate">
+                    {% if viewed_character.last_killed_by %}
+                        <a href="{{ url_for('game.view_character', character_id=viewed_character.last_killed_by.id) }}" class="text-blue-400 hover:text-blue-300">
+                            {{ viewed_character.last_killed_by.name }}
+                        </a>
+                    {% else %}
+                        None
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rankings Section -->
+    <div class="bg-gray-800/50 rounded-lg p-4 mb-4">
+        <h3 class="text-lg font-bold mb-3 border-b border-gray-700 pb-1">Rankings</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">XP Rank:</span>
+                <span class="block text-sm">#{{ user_xp_rank or "N/A" }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Level Rank:</span>
+                <span class="block text-sm">#{{ user_level_rank or "N/A" }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Kills Rank:</span>
+                <span class="block text-sm">#{{ user_kills_rank or "N/A" }}</span>
+            </div>
+            <div class="bg-gray-700/50 p-2 rounded">
+                <span class="text-gray-400 text-xs">Deaths Rank:</span>
+                <span class="block text-sm">#{{ user_deaths_rank or "N/A" }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Battle History Section -->
+    <div class="bg-gray-800/50 rounded-lg p-4">
+        <h3 class="text-lg font-bold mb-3 border-b border-gray-700 pb-1">Battle History</h3>
+        <div class="overflow-x-auto">
+            <div class="min-w-full" style="min-width: 0;"> <!-- Changed from 600px to 0 to prevent overflow -->
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-700 text-left">
+                            <th class="p-2 text-xs sm:text-sm whitespace-nowrap">Attacker</th>
+                            <th class="p-2 text-xs sm:text-sm whitespace-nowrap">Defender</th>
+                            <th class="p-2 text-xs sm:text-sm whitespace-nowrap">Winner</th>
+                            {% if current_user.character and current_user.character.id == viewed_character.id %}
+                            <th class="p-2 text-xs sm:text-sm whitespace-nowrap">Details</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for battle in battle_logs.items %}
+                        <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                            <!-- Attacker Column -->
+                            <td class="p-2">
+                                <div class="flex items-center gap-1 text-xs sm:text-sm" style="color: {{ g.translations['game']['factions'][battle.attacker_faction]['color'] }};">
+                                    <img src="{{ url_for('static', filename='images/' + battle.attacker_faction|lower + '.webp') }}" 
+                                         alt="{{ battle.attacker_faction }}" 
+                                         class="w-4 h-4 rounded-full flex-shrink-0">
+                                    {% if current_user.character and current_user.character.id == viewed_character.id %}
+                                        <a href="{{ url_for('game.view_character', character_id=battle.attacker_id) }}" class="hover:underline truncate">
+                                            {{ battle.attacker_name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="truncate">{{ battle.attacker_name if battle.attacker_id == viewed_character.id else g.translations['game']['factions'][battle.attacker_faction]['name'] }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            <!-- Defender Column -->
+                            <td class="p-2">
+                                <div class="flex items-center gap-1 text-xs sm:text-sm" style="color: {{ g.translations['game']['factions'][battle.defender_faction]['color'] }};">
+                                    <img src="{{ url_for('static', filename='images/' + battle.defender_faction|lower + '.webp') }}" 
+                                         alt="{{ battle.defender_faction }}" 
+                                         class="w-4 h-4 rounded-full flex-shrink-0">
+                                    {% if current_user.character and current_user.character.id == viewed_character.id %}
+                                        <a href="{{ url_for('game.view_character', character_id=battle.defender_id) }}" class="hover:underline truncate">
+                                            {{ battle.defender_name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="truncate">{{ battle.defender_name if battle.defender_id == viewed_character.id else g.translations['game']['factions'][battle.defender_faction]['name'] }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            <!-- Winner Column -->
+                            <td class="p-2">
+                                <div class="flex items-center gap-1 text-xs sm:text-sm" style="color: {{ g.translations['game']['factions'][battle.winner_faction]['color'] }};">
+                                    <img src="{{ url_for('static', filename='images/' + battle.winner_faction|lower + '.webp') }}" 
+                                         alt="{{ battle.winner_faction }}" 
+                                         class="w-4 h-4 rounded-full flex-shrink-0">
+                                    {% if current_user.character and current_user.character.id == viewed_character.id %}
+                                        <a href="{{ url_for('game.view_character', character_id=battle.winner_id) }}" class="hover:underline truncate">
+                                            {{ battle.winner_name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="truncate">{{ battle.winner_name if battle.winner_id == viewed_character.id else g.translations['game']['factions'][battle.winner_faction]['name'] }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            {% if current_user.character and current_user.character.id == viewed_character.id %}
+                            <td class="p-2">
+                                <a href="{{ url_for('game.battle_log', battle_id=battle.id) }}" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs whitespace-nowrap">
+                                    View
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="{% if current_user.character and current_user.character.id == viewed_character.id %}4{% else %}3{% endif %}" class="p-2 text-center text-gray-400 text-xs sm:text-sm">
+                                No battles recorded yet
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if battle_logs.pages > 1 %}
+        <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mt-4">
+            {% if battle_logs.has_prev %}
+                <a href="{{ url_for('game.view_character', character_id=viewed_character.id, page=battle_logs.prev_num) }}" class="bg-gray-700 hover:bg-gray-600 text-white py-1 px-2 rounded text-xs sm:text-sm whitespace-nowrap">
+                    &laquo; Prev
+                </a>
+            {% endif %}
+            
+            {% for page_num in battle_logs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page_num %}
+                    {% if battle_logs.page == page_num %}
+                        <a href="{{ url_for('game.view_character', character_id=viewed_character.id, page=page_num) }}" class="bg-blue-600 text-white py-1 px-2 rounded text-xs sm:text-sm font-bold whitespace-nowrap">
+                            {{ page_num }}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('game.view_character', character_id=viewed_character.id, page=page_num) }}" class="bg-gray-700 hover:bg-gray-600 text-white py-1 px-2 rounded text-xs sm:text-sm whitespace-nowrap">
+                            {{ page_num }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <span class="text-gray-400 py-1 px-2 text-xs sm:text-sm">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if battle_logs.has_next %}
+                <a href="{{ url_for('game.view_character', character_id=viewed_character.id, page=battle_logs.next_num) }}" class="bg-gray-700 hover:bg-gray-600 text-white py-1 px-2 rounded text-xs sm:text-sm whitespace-nowrap">
+                    Next &raquo;
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+function confirmDelete() {
+    const confirmationDiv = document.getElementById('deleteConfirmation');
+    confirmationDiv.classList.toggle('hidden');
+}
+
+function deleteAccount() {
+    const characterName = "{{ viewed_character.name }}";
+    const inputName = document.getElementById('confirmName').value;
+    
+    if (inputName === characterName) {
+        fetch("{{ url_for('game.delete_account') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        });
+    } else {
+        alert("Name doesn't match. Please type your character name exactly.");
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "authenticated_base2.html" %}
+
+{% block content %}
+<div class="w-full p-2 sm:p-4">
+    <!-- Shop Header -->
+    <div class="bg-gray-800/50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold">{{ translations.shop.weapons if translations and translations.shop and translations.shop.weapons else 'Weapon Shop' }}</h2>
+    </div>
+    
+    <!-- Weapons Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {% for weapon in weapons %}
+            {% set weapon_data = translations.get('game', {}).get('items', {}).get('weapon', {}).get(weapon.translation_key, {}) %}
+            
+            <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                <!-- Item Header with Image and Name -->
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ url_for('static', filename='images/items/' + weapon.translation_key + '.webp') }}" 
+                         alt="{{ weapon_data.get('name', weapon.translation_key.replace('_', ' ').title()) }}"
+                         class="w-10 h-10 object-contain rounded"
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.webp') }}'">
+                    <h3 class="text-sm sm:text-base font-semibold">{{ weapon_data.get('name', weapon.translation_key.replace('_', ' ').title()) }}</h3>
+                </div>
+                
+                <!-- Description -->
+                <p class="text-gray-300 text-xs sm:text-sm mb-3">{{ weapon_data.get('description', 'No description available') | replace('\n', '<br>') | safe }}</p>
+                
+                <!-- Stats -->
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                    <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.damage if translations and translations.shop and translations.shop.damage else 'Damage' }}: {{ weapon.stats.damage }}</span>
+                    <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.price if translations and translations.shop and translations.shop.price else 'Price' }}: {{ weapon.price }}</span>
+                    <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.level_required if translations and translations.shop and translations.shop.level_required else 'Level' }}: {{ weapon.min_level }}</span>
+                    <span class="bg-gray-700 px-2 py-1 rounded text-xs">{{ translations.shop.owned if translations and translations.shop and translations.shop.owned else 'Owned' }}: {{ current_user.character.items|selectattr('item_id', 'equalto', weapon.id)|list|length }}</span>
+                    
+                    {% if weapon.required_attribute and weapon.required_amount > 0 %}
+                        <span class="bg-gray-700 px-2 py-1 rounded text-xs">
+                            {{ translations.shop.requires if translations and translations.shop and translations.shop.requires else 'Requires' }}: 
+                            {{ weapon.required_amount }} {{ translations.game.attributes[weapon.required_attribute] if translations and translations.game and translations.game.attributes and weapon.required_attribute in translations.game.attributes else weapon.required_attribute }}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex gap-2">
+                    <form action="{{ url_for('game.buy_item', item_id=weapon.id) }}" method="POST" class="flex-1">
+                        <input type="hidden" name="source" value="weapon_shop">
+                        <button type="submit" 
+                                class="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-sm {% if weapon.price > character.gold or weapon.min_level > character.level %}opacity-50 cursor-not-allowed{% endif %}"
+                                {% if weapon.price > character.gold or weapon.min_level > character.level %}disabled{% endif %}>
+                            {{ translations.shop.buy if translations and translations.shop and translations.shop.buy else 'Buy' }}
+                        </button>
+                    </form>
+                    
+                    {% if current_user.character.items|selectattr('item_id', 'equalto', weapon.id)|list|length > 0 %}
+                        {% if weapon.id not in equipped_items %}
+                            <form action="{{ url_for('game.sell_item', item_id=weapon.id) }}" method="POST" class="flex-1">
+                                <input type="hidden" name="source" value="weapon_shop">
+                                <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-1.5 px-3 rounded text-sm">
+                                    {{ translations.shop.sell if translations and translations.shop and translations.shop.sell else 'Sell' }}
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full text-center py-6 text-gray-400 text-sm sm:text-base">
+                {{ translations.shop.no_items if translations and translations.shop and translations.shop.no_items else 'No weapons available' }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
