@@ -186,12 +186,12 @@ def create_app():
     def inject_user():
         return dict(current_user=current_user)
         
-    @app.after_request
-    def add_header(response):
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '-1'
-        return response
+    #@app.after_request
+    #def add_header(response):
+    #    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    #    response.headers['Pragma'] = 'no-cache'
+    #    response.headers['Expires'] = '-1'
+    #    return response
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(game_bp)
