@@ -4,7 +4,7 @@
 
     <header>
         <button class="mobile-menu-toggle">☰</button>
-        <img src="../static/images/logo_small.png">
+        <img src="../static/images/logo_small.webp">
         <nav>
             <a href="{{ url_for('game.dashboard') }}">{{ translations.get('navigation', {}).get('dashboard', 'Dashboard') }}</a>
             <a href="{{ url_for('auth.logout') }}">{{ translations.get('navigation', {}).get('logout', 'Log Out') }}</a>
@@ -44,7 +44,7 @@
                  <a href="{{ url_for('game.dashboard') }}" class="character-name">
                         {{ current_user.character.name }} 
                     </a>
-                    <img src="{{ url_for('static', filename='images/' + current_user.character.faction|lower + '.png') }}" 
+                    <img src="{{ url_for('static', filename='images/' + current_user.character.faction|lower + '.webp') }}" 
                          alt="{{ current_user.character.name }}" 
                          class="sidebar-avatar">
                          
@@ -63,7 +63,7 @@
 					<div class="sidebar-healing">
 						<div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
                   
-                    <img src="{{ url_for('static', filename='images/icons/' + ('vivo.png' if not current_user.character.is_dead else 'morto.png')) }}" 
+                    <img src="{{ url_for('static', filename='images/icons/' + ('vivo.webp' if not current_user.character.is_dead else 'morto.webp')) }}" 
 						alt="Status" width="25">
 						 {% if current_user.character.is_dead %}
                     <h4>Morto</h4>
@@ -93,7 +93,7 @@
                     
                     <div class="character-id">
                         <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
-							<img src="../static/images/icons/info.png" width="30">
+							<img src="../static/images/icons/info.webp" width="30">
                         <h4>Info</h4>
                         </div>
                         ID: {{ current_user.character.id }}<br>
@@ -108,7 +108,7 @@
 						</div>
 					</div>
                         <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
-							<img src="../static/images/icons/gold.png" width="30">
+							<img src="../static/images/icons/gold.webp" width="30">
                         <h4>Recursos</h4>
                         </div>
                         {{ g.translations['game']['factions'][current_user.character.faction]['stats']['resource'] }}: 
@@ -117,23 +117,23 @@
                         {{ translations.dashboard.diamonds }}: {{ current_user.character.diamonds }}<br>
                          {% if translations and translations.game and translations.game.attributes %}
                          <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
-							<img src="../static/images/icons/atributos.png" width="30">
+							<img src="../static/images/icons/atributos.webp" width="30">
                         <h4>{{ translations.game.attributes.title }}</h4>	
                         </div>
 							{% if current_user.is_authenticated and current_user.character %}
-						<img src="{{ url_for('static', filename='images/status_dex.png') }}" alt="Dex" width="8%">
+						<img src="{{ url_for('static', filename='images/status_dex.webp') }}" alt="Dex" width="8%">
                         <span>{{ translations.game.attributes.destreza }}:
                         {{ "%.3f"|format(current_user.character.destreza) }}</span><br>
                         
-                        <img src="{{ url_for('static', filename='images/status_forca.png') }}" alt="Str" width="8%">
+                        <img src="{{ url_for('static', filename='images/status_forca.webp') }}" alt="Str" width="8%">
                         <span>{{ translations.game.attributes.forca }}:
                         {{ "%.3f"|format(current_user.character.forca) }}</span><br>
                         
-                        <img src="{{ url_for('static', filename='images/status_int.png') }}" alt="Int" width="8%">
+                        <img src="{{ url_for('static', filename='images/status_int.webp') }}" alt="Int" width="8%">
                         <span>{{ translations.game.attributes.inteligencia }}:
                         {{ "%.3f"|format(current_user.character.inteligencia) }}</span><br>
                         
-                        <img src="{{ url_for('static', filename='images/status_devocao.png') }}" alt="Devotion" width="8%">
+                        <img src="{{ url_for('static', filename='images/status_devocao.webp') }}" alt="Devotion" width="8%">
                         <span>{{ translations.game.attributes.devocao }}:
                         {{ "%.3f"|format(current_user.character.devocao) }}</span><br>
                     {% else %}
@@ -141,7 +141,7 @@
                     {% endif %}
                     {% endif %}
                     <div style="display: flex; align-items: center; gap: 0px; margin-bottom: 0px;">
-							<img src="../static/images/icons/ranking.png" width="30">
+							<img src="../static/images/icons/ranking.webp" width="30">
                         <h4>{{ translations.rankings.title }}</h4>	
                         </div>
                     
@@ -186,17 +186,17 @@
                     <!-- Add these links to your navigation menu -->
                     
                     <li> <div class="skills-header">
-							<img src="../static/images/icons/mapa.png" width="35">
+							<img src="../static/images/icons/mapa.webp" width="35">
 						<strong><a href="{{ url_for('game.dashboard') }}" class="nav-link">
 						{{ translations.navigation.cidade }}
 						</a></strong></div></li>
 						 <li><div class="skills-header">
-						<img src="../static/images/icons/profile.png" width="35">
+						<img src="../static/images/icons/profile.webp" width="35">
 						<a href="{{ url_for('game.view_character', character_id=current_user.character.id) if current_user.character else '#' }}">
                         {{ translations.get('navigation', {}).get('profile', 'Profile') }}
                     </a></div></li>
                     <li><div class="skills-header">
-						<img src="../static/images/icons/mailbox.png" width="35">
+						<img src="../static/images/icons/mailbox.webp" width="35">
 						<a href="{{ url_for('game.mailbox') }}" class="nav-link">
 							{{ translations.get('navigation', {}).get('mailbox', 'Mailbox') }}
 							{% if unread_message_count > 0 %}
@@ -207,24 +207,24 @@
                     
                     
                     <li> <div class="skills-header">
-							<img src="../static/images/icons/academy.png" width="35">
+							<img src="../static/images/icons/academy.webp" width="35">
 						<a href="{{ url_for('game.academy') }}" class="nav-link">
 						{{ translations.navigation.academy }}
 						</a></div></li>
                    <li> <div class="skills-header">
-							<img src="../static/images/icons/inventario.png" width="35">
+							<img src="../static/images/icons/inventario.webp" width="35">
 						<a href="{{ url_for('game.shop') }}" class="nav-link">
 						{{ translations.shop.title }}
 						</a></div></li>
 						
 						<li><div class="skills-header">
-							<img src="../static/images/icons/market.png" width="35">
+							<img src="../static/images/icons/market.webp" width="35">
 							<a href="{{ url_for('game.market') }}" class="nav-link">
 							{{ translations.game.market.title if translations and translations.game.market and translations.game.market else 'Market' }}
 						</a></div></li>
 						
 						<li><div class="skills-header">
-							<img src="../static/images/icons/arena.png" width="35">
+							<img src="../static/images/icons/arena.webp" width="35">
 							<a href="{{ url_for('game.fights') }}" class="nav-link">
 							{{ translations.game.fights.title if translations and translations.game.fights and translations.game.fights else 'Batalhas' }}
 						</a></div></li>

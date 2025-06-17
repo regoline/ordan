@@ -20,7 +20,7 @@
                     <img src="{{ url_for('static', filename='images/items/' + item.translation_key + '.PNG') }}" 
                          alt="{{ item.translation_key.replace('_', ' ').title() }}"
                          class="w-10 h-10 object-contain rounded"
-                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.png') }}'">
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/items/default.webp') }}'">
                     <h3 class="text-lg font-medium text-white truncate">
                         {{ item.translation_key.replace('_', ' ').title() }}
                     </h3>

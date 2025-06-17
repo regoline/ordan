@@ -5,7 +5,7 @@
     <!-- Result Header -->
     <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
         <div class="flex items-center gap-3">
-            <img src="{{ url_for('static', filename='images/icons/battle.png') }}" width="40">
+            <img src="{{ url_for('static', filename='images/icons/battle.webp') }}" width="40">
             <h2 class="text-xl sm:text-2xl font-bold">{{ translations.get('fight', {}).get('result', 'Battle Result') }}</h2>
         </div>
     </div>
@@ -14,13 +14,13 @@
     <div class="bg-gray-800/50 rounded-lg p-6 mb-6 text-center">
         {% if winner.id == current_user.character.id %}
             <div class="flex flex-col items-center">
-                <img src="{{ url_for('static', filename='images/icons/winner.png') }}" 
+                <img src="{{ url_for('static', filename='images/icons/winner.webp') }}" 
                      alt="Winner" class="w-20 h-20 mb-4">
                 <h3 class="text-2xl font-bold text-green-500">You won the battle!</h3>
             </div>
         {% else %}
             <div class="flex flex-col items-center">
-                <img src="{{ url_for('static', filename='images/icons/rip.png') }}" 
+                <img src="{{ url_for('static', filename='images/icons/rip.webp') }}" 
                      alt="Defeated" class="w-20 h-20 mb-4">
                 <h3 class="text-2xl font-bold text-red-500">You were defeated!</h3>
             </div>
@@ -77,7 +77,7 @@
     <!-- Fight Log -->
     <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
         <div class="flex items-center gap-3 mb-4">
-            <img src="{{ url_for('static', filename='images/icons/log.png') }}" width="30">
+            <img src="{{ url_for('static', filename='images/icons/log.webp') }}" width="30">
             <h4 class="text-lg font-semibold">{{ translations.get('fight', {}).get('log', 'Battle Log') }}</h4>
         </div>
         <div class="bg-gray-900 rounded-lg p-4">
