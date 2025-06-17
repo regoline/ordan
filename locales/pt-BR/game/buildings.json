@@ -1,0 +1,123 @@
+{
+    "buildings": [
+        {
+            "name": "A Academia",
+            "description": "No alto de um antigo penhasco, esta torre vibra com energia elemental.",
+            "key": "academy",
+            "position": "top-[20%] left-[45%]",
+            "icon": "academia.webp"
+        },
+        {
+            "name": "The Graveyard",
+            "description": "Descrição do cemitério",
+            "key": "battlefield",
+            "position": "top-[35%] left-[2%]",
+            "icon": "treinamento.webp"
+        },
+        {
+            "name": "The Arena",
+            "description": "Cada grito, cada golpe—ressoa eternamente nesta arena encantada.",
+            "key": "arena",
+            "position": "top-[45%] left-[75%]",
+            "icon": "arena.webp"
+        },
+        {
+            "name": "Inventário",
+            "description": "Uma lareira acolhedora, camas macias e baús encantados para guardar seus fardos.",
+            "key": "shop",
+            "position": "top-[30%] left-[35%]",
+            "icon": "inventario.webp"
+        },
+        {
+            "name": "The Weaponshop",
+            "description": "Procurando uma Armadura? Lugar errado.. Ah! Uma arma dura? Podemos ver se tem.",
+            "key": "weaponshop",
+            "position": "top-[40%] left-[45%]",
+            "icon": "arma.webp"
+        },
+        {
+            "name": "The Armorshop",
+            "description": "Procurando uma Arma Dura? Lugar errado.. Ahh! Uma armadura! Sim, temos.",
+            "key": "armor_shop",
+            "position": "top-[40%] left-[60%]",
+            "icon": "armadura.webp"
+        },
+        {
+            "name": "The Magic Shop",
+            "description": "Não é arma nem armadura? Então aqui tem.",
+            "key": "magic_shop",
+            "position": "top-[35%] left-[20%]",
+            "icon": "default.webp"
+        },
+        {
+            "name": "The Bank",
+            "description": "Não é bom sair por ai com tanto dinheiro no bolso.",
+            "key": "bank",
+            "position": "top-[50%] left-[30%]",
+            "icon": "banco.webp"
+        },
+        {
+            "name": "The Mail",
+            "description": "Atenção! Tem carta para você!",
+            "key": "mailbox",
+            "position": "top-[85%] left-[5%]",
+            "icon": "mailbox.webp"
+        },
+        {
+            "name": "The Mine",
+            "description": "Você ouve falar de uma grande mina de diamantes por perto.",
+            "key": "mine",
+            "position": "top-[70%] left-[2%]",
+            "icon": "mina.webp"
+        },
+        {
+            "name": "The Gambling site",
+            "description": "Loteria!!!",
+            "key": "lottery",
+            "position": "top-[80%] left-[15%]",
+            "icon": "lottery.webp"
+        },
+        {
+            "name": "The Hall of Champions",
+            "description": "Só para os melhores, ou piores..",
+            "key": "rankings",
+            "position": "top-[80%] left-[70%]",
+            "icon": "rankings_faction.webp"
+        },
+        {
+            "name": "The Library",
+            "description": "Toda a história de Ordan em um só lugar",
+            "key": "#",
+            "position": "top-[25%] left-[80%]",
+            "icon": "skills.webp"
+        },
+        {
+            "name": "The Mission Board",
+            "description": "Descrição do quadro de missões",
+            "key": "#",
+            "position": "top-[70%] left-[60%]",
+            "icon": "academia.webp"
+        },
+        {
+            "name": "The Wishing Well",
+            "description": "Descrição do poço dos desejos",
+            "key": "#",
+            "position": "top-[55%] left-[40%]",
+            "icon": "market.webp"
+        },
+        {
+            "name": "The Player house",
+            "description": "Descrição da casa do jogador",
+            "key": "#",
+            "position": "top-[55%] left-[55%]",
+            "icon": "profile.webp"
+        },
+        {
+            "name": "The Tavern",
+            "description": "Descrição da taverna",
+            "key": "#",
+            "position": "top-[85%] left-[35%]",
+            "icon": "taverna.webp"
+        }
+    ]
+}

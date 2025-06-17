@@ -1,0 +1,17 @@
+{
+            "title": "Arena de Batalha",
+            "min_level": "Nível Mínimo",
+            "max_level": "Nível Máximo",
+            "search": "Buscar",
+            "results": "Oponentes Disponíveis",
+            "name": "Nome",
+            "level": "Nível",
+            "faction": "Facção",
+            "actions": "Ações",
+            "attack": "Atacar",
+            "no_opponents": "Nenhum oponente encontrado com esses critérios.",
+            "current_level": "Seu nível: {level}",
+            "attackable_range": "Você pode atacar jogadores nível {min} ou acima",
+            "no_limit": "No limit (leave empty)",
+            "min_level_error": "Minimum level must be at least 1"
+        }

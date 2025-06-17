@@ -1,0 +1,270 @@
+{
+    "page_title": "Missões Diárias",
+    "description": "Complete missões para ganhar recompensas! Você pode escolher 1 missão por dia (21 horas).",
+    "active_quest": "Missão Ativa",
+    "available_quests": "Missões Disponíveis",
+    "quest_log": "Histórico de Missões",
+    "no_active_quest": "Você não tem uma missão ativa no momento.",
+    "start_quest": "Iniciar Missão (Custo: 1 recurso)",
+    "quest_completed": "Quest '{title}' completed successfully!",
+    "quest_failed": "Missão Falhou",
+    "rewards": "Recompensas",
+    "reputation_gain": "+2 Reputação",
+    "reputation_loss": "-2 Reputação",
+    "abandon_quest_button": "Abandon Quest",
+    "accept_quest_button": "Accept Quest",
+    "cost": "Cost",
+    "cannot_accept_yet": "You cannot accept a new quest yet.",
+    "objective": "Objetivo",
+    "time_until_new_quest": "Time until new quests",
+    "no_available_quests": "No new quests are available at this time. Check back later!",
+    "table_header_quest": "Missão",
+    "table_header_status": "Status",
+    "table_header_rewards": "Rewards",
+    "table_header_completed_at": "Completed At",
+    "quest_failed_status": "Failed",
+    "quest_accepted": "Missão Aceita!",
+    "quest_failed_timed_out": "Quest '{title}' failed: Time limit expired.",
+    "not_enough_resource": "You don't have enough {resource_name} to accept this quest.",
+    "no_active_quest_to_abandon": "You have no active quest to abandon.",
+    "quest_abandoned": "Quest '{title}' abandoned. You lost 2 reputation.",
+    "reward_gold": "Received {amount} Gold",
+    "reward_diamonds": "Received {amount} Diamonds",
+    "reward_xp": "Received {amount} XP",
+    "reward_reputation": "Received {amount} Reputation",
+    "reward_item": "Received Item {item_name}",
+    "reward_lottery_tickets": "Received {amount} Lottery Tickets",
+    "unique_quest": "Missão Única",
+    "kill_other_faction": "Mate {amount} jogadores de outra facção",
+    "kill_enemy_faction": "Mate {amount} jogadores da facção inimiga",
+    "kill_npc": "Mate {amount}x o NPC {npc}",
+    "mine_resources": "Mine {amount} recursos",
+    "enter_lottery": "Participe da loteria",
+    "deposit_gold": "Deposite {amount} de ouro no banco",
+    "withdraw_gold": "Retire {amount} de ouro do banco",
+    "buy_from_store": "Compre algo na loja {store}",
+    "buy_specific_item": "Compre o item {item}",
+    "train_attribute": "Treine {amount} pontos de {attribute}",
+    "diamonds": "{amount} diamantes",
+    "xp": "{amount} XP",
+    "gold": "{amount} Ouro",
+    "reputation": "{amount} reputação",
+    "item": "Item",
+    "lottery_tickets": "{amount} bilhetes de loteria",
+    "attribute": "{amount} pontos de {attribute}",
+    "admin_title": "Administração de Missões",
+    "add_quest": "Adicionar Missão",
+    "edit_quest": "Editar Missão",
+    "delete_quest": "Excluir Missão",
+    "quest_title": "Título da Missão",
+    "quest_description": "Descrição",
+    "is_active": "Ativa",
+    "is_unique": "Única",
+    "spawn_chance": "Chance de Aparecer (%)",
+    "objectives": "Objetivos",
+    "add_objective": "Adicionar Objetivo",
+    "add_reward": "Adicionar Recompensa",
+    "objective_type": "Tipo de Objetivo",
+    "target_value": "Alvo",
+    "amount_required": "Quantidade",
+    "reward_type": "Tipo de Recompensa",
+    "amount": "Quantidade",
+    "attributes": {
+        "forca": "Força",
+        "destreza": "Destreza",
+        "inteligencia": "Inteligência",
+        "devocao": "Devoção"
+    },
+    "ouro_banco": {
+        "title": "teste2",
+        "description": "teste2"
+    },
+    "missao4": {
+        "title": "missao4",
+        "description": "missao4"
+    },
+    "testeee": {
+        "title": "testeee",
+        "description": "testeee"
+    },
+    "missao3": {
+        "title": "missao3",
+        "description": "missao3"
+    },
+    "missao5": {
+        "title": "missao5",
+        "description": "missao5"
+    },
+    "null": {
+        "title": "missao6",
+        "description": "Missão 6"
+    },
+    "teste2": {
+        "title": "teste2",
+        "description": "teste23"
+    },
+    "tester3": {
+        "title": "teste3",
+        "description": "teste3"
+    },
+    "teste4": {
+        "title": "teste4",
+        "description": "teste4"
+    },
+    "teste5": {
+        "title": "teste5",
+        "description": "teste5"
+    },
+    "testee6": {
+        "title": "teste6",
+        "description": "teste6"
+    },
+    "wefewf": {
+        "title": "fewfwef",
+        "description": "ewfeww"
+    },
+    "teste1": {
+        "title": "teste1",
+        "description": "teste"
+    },
+    "teste6": {
+        "title": "teste6",
+        "description": "teste6"
+    },
+    "missao2": {
+        "title": "missao2",
+        "description": "ouro"
+    },
+    "missao1": {
+        "title": "treino",
+        "description": "treino"
+    },
+    "tetefwf": {
+        "title": "ewef",
+        "description": "efefe"
+    },
+    "terfdw": {
+        "title": "testr4",
+        "description": "testr4"
+    },
+    "wefefe": {
+        "title": "eerer",
+        "description": "gegegewg"
+    },
+    "ewefe": {
+        "title": "eeef",
+        "description": "efefef"
+    },
+    "ewgffwe": {
+        "title": "reeer",
+        "description": "regergerg"
+    },
+    "ergergregrg": {
+        "title": "rgerggreger",
+        "description": "ergvregeg"
+    },
+    "rgergegr": {
+        "title": "ergergregerg",
+        "description": "ergregrereg"
+    },
+    "teste": {
+        "title": "teste",
+        "description": "teste"
+    },
+    "testeew": {
+        "title": "teswte",
+        "description": "teste"
+    },
+    "gold2": {
+        "title": "gold2",
+        "description": "gold2"
+    },
+    "wtett": {
+        "title": "reste",
+        "description": "teswteet"
+    },
+    "ouro": {
+        "title": "ouro",
+        "description": "deposite ouro"
+    },
+    "retire ouro": {
+        "title": "retire ouro",
+        "description": "retire ouro"
+    },
+    "diamantes": {
+        "title": "retire ouro 2",
+        "description": "retire ouro 2"
+    },
+    "wefefewf": {
+        "title": "ewfewfew",
+        "description": "wefwefew"
+    },
+    "wefwefwef": {
+        "title": "wefewfwefew",
+        "description": "wefewfwfewf"
+    },
+    "wefwefwf": {
+        "title": "wefewffwef",
+        "description": "wefewf"
+    },
+    "wefewfewf": {
+        "title": "ewfewfe",
+        "description": "wefwefe"
+    },
+    "wefewfeww": {
+        "title": "ewfwefwewe",
+        "description": "ewfewfwef"
+    },
+    "wefewfewfew": {
+        "title": "wefefewfew",
+        "description": "ewfewfwew"
+    },
+    "hethrehrehe": {
+        "title": "hrehrehwehwe",
+        "description": "whwrthwh"
+    },
+    "tjtejerhrehj": {
+        "title": "tjtehreh",
+        "description": "jtjytrjetrj"
+    },
+    "tjtjretjrej": {
+        "title": "tjtjtjtejje",
+        "description": "wegrhrh2"
+    },
+    "wggwege": {
+        "title": "wefewegwge",
+        "description": "rwhwrhwrh"
+    },
+    "ewgewggweg": {
+        "title": "wgwegewg",
+        "description": "wegweewg"
+    },
+    "ewgwewew": {
+        "title": "ewgwegew",
+        "description": "ewgwegwege"
+    },
+    "whwrhrhwh": {
+        "title": "wrhwrhhwr",
+        "description": "wrhwrhrhr"
+    },
+    "rrhwerhewh": {
+        "title": "rhrwhwhwhe",
+        "description": "whwrhh"
+    },
+    "rhwrhwhre": {
+        "title": "whwhrwhw",
+        "description": "wehwhwhr"
+    },
+    "hwrhwrhr": {
+        "title": "rhwwrhwhr",
+        "description": "wrhwrhhh"
+    },
+    "rwhrwhhwehr": {
+        "title": "hwrhhwrhw",
+        "description": "whwrhrhw"
+    },
+    "rhrhr": {
+        "title": "whrhjre",
+        "description": "ertjerjrej"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "iron_sword": {
+        "name": "Espada de aço",
+        "description": "Uma espada de aço"
+    },
+    "short_bow": {
+        "name": "Short Bow",
+        "description": "A short bow"
+    },
+    "short_dagger": {
+        "name": "Short Dagger",
+        "description": "A short dagger"
+    }
+}

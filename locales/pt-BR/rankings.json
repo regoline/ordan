@@ -1,0 +1,14 @@
+{
+        "title": "Player Rankings",
+        "by_xp": "By XP",
+        "by_level": "By Level",
+        "by_kills": "By Kills",
+        "by_deaths": "By Deaths",
+        "top_forca": "Top Strength",
+        "top_destreza": "Top Dexterity",
+        "top_inteligencia": "Top Intelligence",
+        "top_devocao": "Top Devotion",
+        "top_combined": "Top Combined",
+        "top_reputation": "Best Reputation",
+        "worst_reputation": "Worst Reputation"
+    }

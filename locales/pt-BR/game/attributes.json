@@ -1,0 +1,17 @@
+{
+            "title": "Atributos",
+            "destreza": "Destreza",
+            "forca": "Força",
+            "inteligencia": "Inteligência",
+            "devocao": "Devoção",
+            "healthpoints": "Pontos de Vida",
+            "hp_modifier": "Modificador de Vida",
+            "skill_destreza_description": "Se sua destreza for maior que a de seu oponente, você possui uma pequena chance de atacar primeiro e desviar de ataques.",
+            "skill_forca_description": "Se sua Força for maior que a de seu oponente, você possui uma pequena chance de bloquear um ataque.",
+            "skill_inteligencia_description": "Se sua Inteligência for maior que a de seu oponente, você possui uma pequena chance de causar 50% de dano.",
+            "skill_devocao_description": "Se sua Devoção for maior que a de seu oponente, você possui uma pequena chance de restaurar parte do deu HP máximo durante o combate.",
+            "skill_name_destreza": "Reflexos rápidos",
+            "skill_name_forca": "Armadura Forte",
+            "skill_name_inteligencia": "Precisão aérea",
+            "skill_name_devocao": "Resiliência Curadora"
+        }

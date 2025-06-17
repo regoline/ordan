@@ -1,0 +1,27 @@
+{
+    "training_dummy": {
+        "name": "Training Dummy",
+        "description": "A simple training dummy for practicing combat skills",
+        "motto": "Hit me as hard as you can!"
+    },
+    "bandit": {
+        "name": "Bandit",
+        "description": "A dangerous bandit looking for easy prey",
+        "motto": "Your gold or your life!"
+    },
+    "skeleton": {
+        "name": "Skeleton",
+        "description": "A skeleton",
+        "motto": "I am skeleton"
+    },
+    "torres": {
+        "name": "Torres",
+        "description": "A torres",
+        "motto": "I am torres"
+    },
+    "controle_mental": {
+        "name": "Controle Mental",
+        "description": "A controle mental",
+        "motto": "I am controle mental"
+    }
+}
