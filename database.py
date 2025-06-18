@@ -483,7 +483,7 @@ class PlayerQuest(db.Model):
     last_quest_refresh = db.Column(db.DateTime, nullable=True, default=None)
     character = db.relationship('Character', backref='quests')
     quest = db.relationship('Quest')
-    quest_progress = db.relationship('QuestProgress', lazy=True, cascade="all, delete-orphan", primaryjoin="PlayerQuest.id == QuestProgress.player_quest_id")
+    quest_progress = db.relationship('QuestProgress', lazy=True, cascade="all, delete-orphan", primaryjoin="PlayerQuest.id == QuestProgress.player_quest_id", back_populates='player_quest')
 
 class QuestProgress(db.Model):
     __tablename__ = 'quest_progress'
@@ -495,7 +495,7 @@ class QuestProgress(db.Model):
     progress_value = db.Column(db.Integer, default=0)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    player_quest = db.relationship('PlayerQuest', foreign_keys=[player_quest_id])
+    player_quest = db.relationship('PlayerQuest', foreign_keys=[player_quest_id], back_populates='quest_progress')
     
     character = db.relationship('Character', backref='quest_progress')
     objective = db.relationship('QuestObjective', backref='progress')
